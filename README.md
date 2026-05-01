@@ -1,46 +1,53 @@
-# My work assignment Title
-
-Repository to host the project developed for 'some class', a n^th^ year subject at SOMESCHOOL. Developed by Group ALPHA : [@MarcoOliveira](https://github.com/marcoamarooliveira), [add others].
+# Sistema de Gestão de Ginásio - Desenvolvimento Web II
 
 ## Short theme description
 
-An example report using markdown on Github. This documentation is writen using [Markdown](https://www.markdownguide.org/). Here is a [link to the basic syntax](https://www.markdownguide.org/basic-syntax), but an [extended syntax](https://www.markdownguide.org/extended-syntax/) is also available. If you're starting with Markdown, you may want to try a [Markdown Tutorial](https://www.markdowntutorial.com/) and read the [getting started](https://www.markdownguide.org/getting-started/) section.
+Este projeto consiste no desenvolvimento de uma API REST, explorando operações CRUD, para suportar um Sistema de Gestão de Ginásio. A plataforma permite operar de forma segura sobre perfis de atletas (Users), gerir os seus planos de treino personalizados (Workouts) e consultar uma biblioteca global de atividades físicas (Exercises). A arquitetura contempla relações robustas entre os recursos e regras estritas de isolamento de dados por utilizador. O projeto foi desenvolvido em Node.js (framework Express), com persistência de dados em MySQL gerida através do ORM Sequelize, protegido por múltiplas camadas de autenticação (incluindo OAuth 2.0) e executado num ambiente multi-container Docker.
+
 
 ## Repository organization
 
-_Please help reader navigate around describing how the repository is organized by providing links_
+A estrutura do nosso repositório compõe se por:
+
 * **Source code** is in the [src folder](src/).
+    Contém:
+    * API (Express + NodeJS) na pasta [express-server](src/express-server/)
+    * Dockerfiles:
+        * [Dockerfile da API](src/express-server/Dockerfile)
+        * [docker-compose.dev.yaml](src/docker-compose.dev.yaml)
+        * [docker-compose.prod.yaml](src/docker-compose.prod.yaml)
+    * Initial [OpenApi document](src/openapi.yaml)
 * Report chapters are in [doc folder](doc/).
-* Initial [OpenApi document](api/openapi.yaml)
+    * Chapter 1: [Project presentation](doc/c1.md)
+    * Chapter 2: [Resources](doc/c2.md)
+    * Chapter 3: [Product](doc/c3.md)
+    * Chapter 4: [Presentation](doc/c4.md)
 
-## Gallery
 
-_Please provide a galery of the final result, with small images_
-A [table](https://www.markdownguide.org/extended-syntax/#tables) may be usefull to organize the images.
+## Gallery of our Final Result
+
+| Image  | Description | Image´s preview |
+| :---    |    :----:   |          ---: |
+| Browser | Final result in browser | <img src="" width="300">   |
+| Postman | Final result in Postman | <img src="">  |
+| Docker  | Multicontainer-App final result in Docker | <img src="" width="300">    |
 
 ## Technologies
 
-_Indicate the technologies you have used in this assignment. Please provide links for the user to read more about those technologies._
-* [XML](https://www.w3.org/XML/)
-* [HTML5](https://html.spec.whatwg.org/multipage/) + [CSS3](https://www.w3.org/Style/CSS/)
-* [Javascript](https://developer.mozilla.org/en-US/docs/Learn/JavaScript)
-* [PHP](https://www.php.net/)
+As tecnologias principais usadas neste projeto foram:
+
 * [nodeJS](https://nodejs.org/en/)
-* _Any other?_
+* [expressJS](https://expressjs.com/)
+* [MySQL](https://mysql.com/)
+* [openAPI](https://openapis.org/)
+* [Docker](https://docker.com/)
 
 ### Frameworks and Libraries
 
-_Did you use any aditional libraries? Describe them here._
 * Docker
-* Multipass
 * NodeJS
-* JQuery
-* Laravel
-* Bootstrap
-* ReactJS
 
 ## Report
-_Please add at least on section (a file) per Chapter. But you can add more._
 
 ### Project presentation
 * Chapter 1: [Project presentation](doc/c1.md)
@@ -51,4 +58,8 @@ _Please add at least on section (a file) per Chapter. But you can add more._
 ### Presentation
 * Chapter 4: [Presentation](doc/c4.md)
 
-## Team
+## Equipa
+
+* Camila Olim [@CamiOlli](https://github.com/CamiOlli)
+* Rodrigo Esteves [@Rodrigo-Esteves13](https://github.com/Rodrigo-Esteves13)
+* Romeu Pinto  [@a047610](https://github.com/a047610)
