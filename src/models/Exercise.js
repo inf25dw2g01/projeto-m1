@@ -13,7 +13,4 @@ const Exercise = sequelize.define('Exercise', {
     }
 });
 
-Workout.hasMany(Exercise);
-Exercise.belongsTo(Workout);
-
 module.exports = Exercise;

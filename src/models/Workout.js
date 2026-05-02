@@ -9,6 +9,10 @@ const Workout = sequelize.define('Workout', {
     },
     description: {
         type: DataTypes.STRING
+    },
+    visibility: {
+        type: DataTypes.ENUM('public', 'private'),
+        defaultValue: 'private'
     }
 });
 

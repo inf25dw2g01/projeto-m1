@@ -1,8 +1,8 @@
-const sequelize = require('./config/database');
-const User = require('./models/User');
-const Workout = require('./models/Workout');
-const Exercise = require('./models/Exercise');
-const WorkoutExercise = require('./models/WorkoutExercise');
+const sequelize = require('../config/database');
+const User = require('../models/User');
+const Workout = require('../models/Workout');
+const Exercise = require('../models/Exercise');
+const WorkoutExercise = require('../models/WorkoutExercise');
 
 sequelize.sync({ force: true }).then(async () => {
     console.log('Database synced!');
@@ -20,6 +20,7 @@ sequelize.sync({ force: true }).then(async () => {
     const newWorkout = await Workout.create({
         title: 'Leg day',
         description: '...',
+        visibility: 'public',
         UserId: newUser.id
     });
     console.log('Workout created:', newWorkout.toJSON());
@@ -32,9 +33,11 @@ sequelize.sync({ force: true }).then(async () => {
 
     const newWorkoutExercise = await WorkoutExercise.create({
         WorkoutId: newWorkout.id,
-        ExerciseId: newExercise.id
+        ExerciseId: newExercise.id,
+        sets: 3,
+        reps: 10
     });
-    console.log('Exercise created:', newExercise.toJSON());
+    console.log('WorkoutExercise created:', newWorkoutExercise.toJSON());
 
     //READ
 
