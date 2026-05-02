@@ -1,0 +1,23 @@
+{
+  "name": "src",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inf25dw2g01/projeto-m1.git"
+  },
+  "author": "Grupo 1",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/inf25dw2g01/projeto-m1/issues"
+  },
+  "homepage": "https://github.com/inf25dw2g01/projeto-m1#readme",
+  "description": "",
+  "dependencies": {
+    "mysql2": "^3.22.3",
+    "sequelize": "^6.37.8"
+  }
+}
