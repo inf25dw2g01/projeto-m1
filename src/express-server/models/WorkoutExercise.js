@@ -20,7 +20,7 @@ const WorkoutExercise = sequelize.define("WorkoutExercise", {
   },
 });
 
-Workout.belongsToMany(Exercise, { through: "WorkoutExercise" });
-Exercise.belongsToMany(Workout, { through: "WorkoutExercise" });
+Workout.belongsToMany(Exercise, { through: WorkoutExercise });
+Exercise.belongsToMany(Workout, { through: WorkoutExercise });
 
 module.exports = WorkoutExercise;

@@ -1,0 +1,391 @@
+openapi: 3.0.0
+info:
+  contact:
+    name: Grupo inf25dw1g05
+  description: "API REST para o Sistema de Gestão de Ginásio. Permite gestão privada\
+    \ e partilha pública de planos de treino, bem como consulta pública do catálogo\
+    \ de exercícios."
+  title: Gym Tracker API
+  version: 1.0.0
+servers:
+- description: Servidor Local Docker
+  url: http://localhost:8080
+paths:
+  /users/me:
+    get:
+      operationId: usersMeGET
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+          description: Dados do perfil do utilizador
+      security:
+      - basicAuth: []
+      - ApiKeyAuth: []
+      - OAuth2Github: []
+      - OAuth2Google: []
+      summary: Devolve as informações do perfil do atleta autenticado
+      tags:
+      - Users
+      x-eov-operation-handler: controllers/UsersController
+  /workouts/public:
+    get:
+      operationId: workoutsPublicGET
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Workout"
+                type: array
+          description: Array de Workouts públicos
+      security:
+      - basicAuth: []
+      - ApiKeyAuth: []
+      - OAuth2Github: []
+      - OAuth2Google: []
+      summary: Devolve todos os planos de treino PÚBLICOS da comunidade
+      tags:
+      - Workouts
+      x-eov-operation-handler: controllers/WorkoutsController
+  /workouts/me:
+    get:
+      operationId: workoutsMeGET
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Workout"
+                type: array
+          description: Array de Workouts do utilizador
+      security:
+      - basicAuth: []
+      - ApiKeyAuth: []
+      - OAuth2Github: []
+      - OAuth2Google: []
+      summary: Devolve todos os treinos do utilizador autenticado (Públicos e Privados)
+      tags:
+      - Workouts
+      x-eov-operation-handler: controllers/WorkoutsController
+  /workouts:
+    post:
+      operationId: workoutsPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkoutRequest"
+        required: true
+      responses:
+        "201":
+          description: Plano de treino criado com sucesso
+      security:
+      - basicAuth: []
+      - ApiKeyAuth: []
+      - OAuth2Github: []
+      - OAuth2Google: []
+      summary: Cria um novo plano de treino para o utilizador autenticado
+      tags:
+      - Workouts
+      x-eov-operation-handler: controllers/WorkoutsController
+  /workouts/{id}:
+    delete:
+      operationId: workoutsIdDELETE
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "204":
+          description: Treino apagado (No Content)
+      security:
+      - basicAuth: []
+      - ApiKeyAuth: []
+      - OAuth2Github: []
+      - OAuth2Google: []
+      summary: Apaga um plano de treino (Apenas o autor pode apagar)
+      tags:
+      - Workouts
+      x-eov-operation-handler: controllers/WorkoutsController
+    get:
+      operationId: workoutsIdGET
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workout"
+          description: Detalhes do treino
+        "403":
+          description: Acesso negado
+      security:
+      - basicAuth: []
+      - ApiKeyAuth: []
+      - OAuth2Github: []
+      - OAuth2Google: []
+      summary: Devolve os detalhes de um treino específico
+      tags:
+      - Workouts
+      x-eov-operation-handler: controllers/WorkoutsController
+    put:
+      operationId: workoutsIdPUT
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkoutRequest"
+        required: true
+      responses:
+        "200":
+          description: Treino atualizado com sucesso
+      security:
+      - basicAuth: []
+      - ApiKeyAuth: []
+      - OAuth2Github: []
+      - OAuth2Google: []
+      summary: Atualiza um plano de treino (Apenas o autor pode atualizar)
+      tags:
+      - Workouts
+      x-eov-operation-handler: controllers/WorkoutsController
+  /exercises:
+    get:
+      operationId: exercisesGET
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Exercise"
+                type: array
+          description: Array com todos os exercícios
+      security: []
+      summary: Devolve a lista global de exercícios disponíveis
+      tags:
+      - Exercises
+      x-eov-operation-handler: controllers/ExercisesController
+  /exercises/{id}:
+    get:
+      operationId: exercisesIdGET
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exercise"
+          description: Detalhes do exercício
+      security: []
+      summary: Devolve os detalhes de um exercício específico
+      tags:
+      - Exercises
+      x-eov-operation-handler: controllers/ExercisesController
+components:
+  schemas:
+    User:
+      example:
+        firstName: firstName
+        lastName: lastName
+        apiKey: apiKey
+        id: 0
+        email: email
+      properties:
+        id:
+          format: int64
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        apiKey:
+          type: string
+      required:
+      - email
+      - firstName
+      type: object
+    Exercise:
+      example:
+        description: description
+        id: 5
+        title: title
+      properties:
+        id:
+          format: int64
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+      required:
+      - description
+      - title
+      type: object
+    WorkoutExercise:
+      example:
+        reps: 5
+        Exercise:
+          description: description
+          id: 5
+          title: title
+        sets: 1
+      properties:
+        sets:
+          description: Número de séries
+          type: integer
+        reps:
+          description: Número de repetições
+          type: integer
+        Exercise:
+          $ref: "#/components/schemas/Exercise"
+      type: object
+    Workout:
+      example:
+        visibility: public
+        UserId: 6
+        description: description
+        Exercises:
+        - reps: 5
+          Exercise:
+            description: description
+            id: 5
+            title: title
+          sets: 1
+        - reps: 5
+          Exercise:
+            description: description
+            id: 5
+            title: title
+          sets: 1
+        id: 0
+        title: title
+      properties:
+        id:
+          format: int64
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        visibility:
+          description: Define se o treino é público para todos ou privado para o autor.
+          enum:
+          - public
+          - private
+          type: string
+        UserId:
+          description: O dono do treino (Relação 1:N)
+          format: int64
+          type: integer
+        Exercises:
+          description: Lista de exercícios com as respetivas séries e repetições
+          items:
+            $ref: "#/components/schemas/WorkoutExercise"
+          type: array
+      required:
+      - title
+      - visibility
+      type: object
+    WorkoutExerciseRequest:
+      example:
+        reps: 1
+        exerciseId: 0
+        sets: 6
+      properties:
+        exerciseId:
+          type: integer
+        sets:
+          type: integer
+        reps:
+          type: integer
+      required:
+      - exerciseId
+      - reps
+      - sets
+      type: object
+    WorkoutRequest:
+      example:
+        visibility: private
+        exercises:
+        - reps: 1
+          exerciseId: 0
+          sets: 6
+        - reps: 1
+          exerciseId: 0
+          sets: 6
+        description: description
+        title: title
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        visibility:
+          default: private
+          enum:
+          - public
+          - private
+          type: string
+        exercises:
+          description: Array com os exercícios a associar (incluindo séries e repetições)
+          items:
+            $ref: "#/components/schemas/WorkoutExerciseRequest"
+          type: array
+      required:
+      - title
+      type: object
+  securitySchemes:
+    basicAuth:
+      scheme: basic
+      type: http
+    ApiKeyAuth:
+      in: header
+      name: x-api-key
+      type: apiKey
+    OAuth2Github:
+      flows:
+        authorizationCode:
+          authorizationUrl: http://localhost:8080/auth/github
+          scopes: {}
+          tokenUrl: https://github.com/login/oauth/access_token
+      type: oauth2
+    OAuth2Google:
+      flows:
+        authorizationCode:
+          authorizationUrl: http://localhost:8080/auth/google
+          scopes: {}
+          tokenUrl: https://oauth2.googleapis.com/token
+      type: oauth2

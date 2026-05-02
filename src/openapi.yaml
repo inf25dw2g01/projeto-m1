@@ -1,0 +1,330 @@
+openapi: 3.0.0
+info:
+  title: Gym Tracker API
+  version: 1.0.0
+  description: API REST para o Sistema de Gestão de Ginásio. Permite gestão privada e partilha pública de planos de treino, bem como consulta pública do catálogo de exercícios.
+  contact:
+    name: Grupo inf25dw1g05
+
+servers:
+- url: http://localhost:8080
+  description: Servidor Local Docker
+
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+
+    OAuth2Github:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: "http://localhost:8080/auth/github"
+          tokenUrl: "https://github.com/login/oauth/access_token"
+          scopes: {}
+
+    OAuth2Google:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: "http://localhost:8080/auth/google"
+          tokenUrl: "https://oauth2.googleapis.com/token"
+          scopes: {}
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        apiKey:
+          type: string
+      required:
+      - firstName
+      - email
+
+    Exercise:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        description:
+          type: string
+      required:
+      - title
+      - description
+
+    # NOME NOVO: Representa a tabela pivô no GET
+    WorkoutExercise:
+      type: object
+      properties:
+        sets:
+          type: integer
+          description: Número de séries
+        reps:
+          type: integer
+          description: Número de repetições
+        Exercise:
+          $ref: '#/components/schemas/Exercise'
+
+    Workout:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        description:
+          type: string
+        visibility:
+          type: string
+          enum: [ public, private ]
+          description: Define se o treino é público para todos ou privado para o autor.
+        UserId:
+          type: integer
+          format: int64
+          description: O dono do treino (Relação 1:N)
+        Exercises:
+          type: array
+          description: Lista de exercícios com as respetivas séries e repetições
+          items:
+            $ref: '#/components/schemas/WorkoutExercise'
+      required:
+      - title
+      - visibility
+
+    # NOME NOVO: Os dados do exercício que enviamos no POST
+    WorkoutExerciseRequest:
+      type: object
+      properties:
+        exerciseId:
+          type: integer
+        sets:
+          type: integer
+        reps:
+          type: integer
+      required:
+      - exerciseId
+      - sets
+      - reps
+
+    # NOME NOVO: O corpo inteiro do POST para criar treino
+    WorkoutRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        visibility:
+          type: string
+          enum: [ public, private ]
+          default: private
+        exercises:
+          type: array
+          description: Array com os exercícios a associar (incluindo séries e repetições)
+          items:
+            $ref: '#/components/schemas/WorkoutExerciseRequest'
+      required:
+      - title
+
+paths:
+  /users/me:
+    get:
+      tags:
+      - Users
+      summary: Devolve as informações do perfil do atleta autenticado
+      security:
+      - basicAuth: []
+      - ApiKeyAuth: []
+      - OAuth2Github: []
+      - OAuth2Google: []
+      responses:
+        '200':
+          description: Dados do perfil do utilizador
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /workouts/public:
+    get:
+      tags:
+      - Workouts
+      summary: Devolve todos os planos de treino PÚBLICOS da comunidade
+      security:
+      - basicAuth: []
+      - ApiKeyAuth: []
+      - OAuth2Github: []
+      - OAuth2Google: []
+      responses:
+        '200':
+          description: Array de Workouts públicos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Workout'
+
+  /workouts/me:
+    get:
+      tags:
+      - Workouts
+      summary: Devolve todos os treinos do utilizador autenticado (Públicos e Privados)
+      security:
+      - basicAuth: []
+      - ApiKeyAuth: []
+      - OAuth2Github: []
+      - OAuth2Google: []
+      responses:
+        '200':
+          description: Array de Workouts do utilizador
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Workout'
+
+  /workouts:
+    post:
+      tags:
+      - Workouts
+      summary: Cria um novo plano de treino para o utilizador autenticado
+      security:
+      - basicAuth: []
+      - ApiKeyAuth: []
+      - OAuth2Github: []
+      - OAuth2Google: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkoutRequest'
+      responses:
+        '201':
+          description: Plano de treino criado com sucesso
+
+  /workouts/{id}:
+    get:
+      tags:
+      - Workouts
+      summary: Devolve os detalhes de um treino específico
+      security:
+      - basicAuth: []
+      - ApiKeyAuth: []
+      - OAuth2Github: []
+      - OAuth2Google: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Detalhes do treino
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workout'
+        '403':
+          description: Acesso negado
+
+    put:
+      tags:
+      - Workouts
+      summary: Atualiza um plano de treino (Apenas o autor pode atualizar)
+      security:
+      - basicAuth: []
+      - ApiKeyAuth: []
+      - OAuth2Github: []
+      - OAuth2Google: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkoutRequest'
+      responses:
+        '200':
+          description: Treino atualizado com sucesso
+
+    delete:
+      tags:
+      - Workouts
+      summary: Apaga um plano de treino (Apenas o autor pode apagar)
+      security:
+      - basicAuth: []
+      - ApiKeyAuth: []
+      - OAuth2Github: []
+      - OAuth2Google: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: Treino apagado (No Content)
+
+  /exercises:
+    get:
+      tags:
+      - Exercises
+      summary: Devolve a lista global de exercícios disponíveis
+      security: []
+      responses:
+        '200':
+          description: Array com todos os exercícios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Exercise'
+
+  /exercises/{id}:
+    get:
+      tags:
+      - Exercises
+      summary: Devolve os detalhes de um exercício específico
+      security: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Detalhes do exercício
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exercise'
