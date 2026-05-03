@@ -288,7 +288,9 @@ const workoutexercise_data = [
 
 const runSeed = async () => {
     try {
+        await sequelize.query('SET FOREIGN_KEY_CHECKS = 0');
         await sequelize.sync({ force: true });
+        await sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
         
         console.log("A inserir Utilizadores...");
         await User.bulkCreate(user_data, { validate: true });

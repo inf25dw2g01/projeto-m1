@@ -6,26 +6,44 @@ const User = require("../models/User");
 *
 * returns User
 * */
+const getAuthenticatedUser = async (req) => {
+  let user = null;
 
-const usersMeGET = (req) =>
-  new Promise(async (resolve, reject) => {
+  // OAuth2 (GitHub ou Google)
+  if (req.user) {
+    user = req.user;
+  }
+
+  // (API Key)
+  if (!user) {
+    const apiKey = req.headers['x-api-key'];
+    if (apiKey) {
+      //user = await User.findOne({ where: { apiKey: apiKey } });
+    }
+  }
+
+  // PORTA 3: Basic Auth
+  if (!user) {
+    const authHeader = req.headers['authorization'];
+    if (authHeader && authHeader.startsWith('Basic ')) {
+      //
+    }
+  }
+  if (!user) {
+    throw { status: 401, message: "Acesso negado. Autentica-te via OAuth, API Key ou Basic Auth." };
+  }
+
+  return user;
+};
+const usersMeGET = (req) => new Promise(async (resolve, reject) => {
     try {
-      const authHeader = req.headers["authorization"];
-
-      if (!authHeader) {
-        return reject(Service.rejectResponse("Não autenticado. Falta o header Authorization.", 401));
-      }
-      const user = await User.findOne({
-        attributes: ["id", "firstName", "lastName", "email"], 
-      });
-      if (!user) {
-        return reject(Service.rejectResponse("Nenhum utilizador na base de dados.", 404));
-      }
+      const user = await getAuthenticatedUser(req);
+      
       resolve(Service.successResponse(user));
     } catch (e) {
-      reject(Service.rejectResponse(e.message || "Erro interno do servidor", 500));
+      reject(Service.rejectResponse(e.message || 'Erro interno', e.status || 500));
     }
-  });
+})
 
 module.exports = {
   usersMeGET,

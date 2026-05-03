@@ -1,21 +1,22 @@
 /* eslint-disable no-unused-vars */
 const Service = require('./Service');
+const Exercise = require('../models/Exercise');
 
 /**
 * Devolve a lista global de exercícios disponíveis
 *
 * returns List
 * */
-const exercisesGET = () => new Promise(
+const exercisesGET = (req) => new Promise(
   async (resolve, reject) => {
     try {
-      resolve(Service.successResponse({
-      }));
+      const exercises = await Exercise.findAll({
+        attributes: ['id', 'title', 'description']
+      });
+      
+      resolve(Service.successResponse(exercises));
     } catch (e) {
-      reject(Service.rejectResponse(
-        e.message || 'Invalid input',
-        e.status || 405,
-      ));
+      reject(Service.rejectResponse(e.message || 'Erro interno do servidor', 500));
     }
   },
 );
@@ -25,17 +26,19 @@ const exercisesGET = () => new Promise(
 * id Integer 
 * returns Exercise
 * */
-const exercisesIdGET = ({ id }) => new Promise(
+const exercisesIdGET = (req) => new Promise(
   async (resolve, reject) => {
     try {
-      resolve(Service.successResponse({
-        id,
-      }));
+      const id = req.params.id; 
+      const exercise = await Exercise.findByPk(id, {
+        attributes: ['id', 'title', 'description']
+      });
+      if (!exercise) {
+        return reject(Service.rejectResponse('Exercício não encontrado', 404));
+      }
+      resolve(Service.successResponse(exercise));
     } catch (e) {
-      reject(Service.rejectResponse(
-        e.message || 'Invalid input',
-        e.status || 405,
-      ));
+      reject(Service.rejectResponse(e.message || 'Erro interno do servidor', 500));
     }
   },
 );

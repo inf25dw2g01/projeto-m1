@@ -8,30 +8,30 @@
 
 const Controller = require('./Controller');
 const service = require('../services/WorkoutsService');
-const workoutsIdDELETE = async (request, response) => {
-  await Controller.handleRequest(request, response, service.workoutsIdDELETE);
-};
 
-const workoutsIdGET = async (request, response) => {
-  await Controller.handleRequest(request, response, service.workoutsIdGET);
-};
-
-const workoutsIdPUT = async (request, response) => {
-  await Controller.handleRequest(request, response, service.workoutsIdPUT);
+const workoutsPublicGET = async (request, response) => {
+  await Controller.handleRequest(request, response, () => service.workoutsPublicGET(request));
 };
 
 const workoutsMeGET = async (request, response) => {
-  await Controller.handleRequest(request, response, service.workoutsMeGET);
+  await Controller.handleRequest(request, response, () => service.workoutsMeGET(request));
 };
 
 const workoutsPOST = async (request, response) => {
-  await Controller.handleRequest(request, response, service.workoutsPOST);
+  await Controller.handleRequest(request, response, () => service.workoutsPOST(request));
 };
 
-const workoutsPublicGET = async (request, response) => {
-  await Controller.handleRequest(request, response, service.workoutsPublicGET);
+const workoutsIdDELETE = async (request, response) => {
+  await Controller.handleRequest(request, response, () => service.workoutsIdDELETE(request));
 };
 
+const workoutsIdGET = async (request, response) => {
+  await Controller.handleRequest(request, response, () => service.workoutsIdGET(request));
+};
+
+const workoutsIdPUT = async (request, response) => {
+  await Controller.handleRequest(request, response, () => service.workoutsIdPUT(request));
+};
 
 module.exports = {
   workoutsIdDELETE,

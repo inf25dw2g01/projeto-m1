@@ -9,11 +9,11 @@
 const Controller = require('./Controller');
 const service = require('../services/ExercisesService');
 const exercisesGET = async (request, response) => {
-  await Controller.handleRequest(request, response, service.exercisesGET);
+  await Controller.handleRequest(request, response, () => service.exercisesGET(request));
 };
 
 const exercisesIdGET = async (request, response) => {
-  await Controller.handleRequest(request, response, service.exercisesIdGET);
+  await Controller.handleRequest(request, response, () => service.exercisesIdGET(request));
 };
 
 
