@@ -52,6 +52,7 @@ components:
         apiKey:
           type: string
       required:
+      - id
       - firstName
       - email
 

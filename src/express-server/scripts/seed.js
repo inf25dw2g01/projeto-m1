@@ -6,11 +6,11 @@ const Exercise = require('../models/Exercise');
 const WorkoutExercise = require('../models/WorkoutExercise');
 
 const user_data = [
-  { firstName: "John", lastName: "Baker", email: "aksjhad@teste.pt", password: "hashed_password_1" },
-  { firstName: "Max", lastName: "Butler", email: "aksjhad@teste.pt", password: "hashed_password_2" },
-  { firstName: "Ryan", lastName: "Fisher", email: "aksjhad@teste.pt", password: "hashed_password_3" },
-  { firstName: "Robert", lastName: "Gray", email: "aksjhad@teste.pt", password: "hashed_password_4" },
-  { firstName: "Sam", lastName: "Lewis", email: "aksjhad@teste.pt", password: "hashed_password_5" },
+  { firstName: "John", lastName: "Baker", email: "aksjhad1@teste.pt", password: "hashed_password_1" },
+  { firstName: "Max", lastName: "Butler", email: "aksjhad2@teste.pt", password: "hashed_password_2" },
+  { firstName: "Ryan", lastName: "Fisher", email: "aksjhad3@teste.pt", password: "hashed_password_3" },
+  { firstName: "Robert", lastName: "Gray", email: "aksjhad4@teste.pt", password: "hashed_password_4" },
+  { firstName: "Sam", lastName: "Lewis", email: "aksjhad5@teste.pt", password: "hashed_password_5" },
   { firstName: "Alice", lastName: "Smith", email: "alice.s@teste.pt", password: "hashed_password_6" },
   { firstName: "David", lastName: "Miller", email: "d.miller@teste.pt", password: "hashed_password_7" },
   { firstName: "Emma", lastName: "Wilson", email: "emma.w@teste.pt", password: "hashed_password_8" },
@@ -286,32 +286,29 @@ const workoutexercise_data = [
   { "sets": 4, "reps": 15, "WorkoutId": 100, "ExerciseId": 19 }
 ]
 
-sequelize.sync({ force: true }).then(() => {
-    
-    User.bulkCreate(user_data, { validate: true }).then((result) => {
-        console.log(result);
-    }).catch((error) => {
-        console.log(error);
-    });
-    
-    Workout.bulkCreate(workout_data, { validate: true }).then((result) => {
-        console.log(result);
-    }).catch((error) => {
-        console.log(error);
-    });
-    
-    Exercise.bulkCreate(exercise_data, { validate: true }).then((result) => {
-        console.log(result);
-    }).catch((error) => {
-        console.log(error);
-    });
+const runSeed = async () => {
+    try {
+        await sequelize.sync({ force: true });
+        
+        console.log("A inserir Utilizadores...");
+        await User.bulkCreate(user_data, { validate: true });
 
-    WorkoutExercise.bulkCreate(workoutexercise_data, { validate: true }).then((result) => {
-        console.log(result);
-    }).catch((error) => {
-        console.log(error);
-    });
+        console.log("A inserir Exercícios...");
+        await Exercise.bulkCreate(exercise_data, { validate: true });
 
-}).catch((error) => {
-    console.error('Unable to create table : ', error);
-});
+        console.log("A inserir Treinos...");
+        await Workout.bulkCreate(workout_data, { validate: true });
+
+        console.log("A inserir Relações (WorkoutExercises)...");
+        await WorkoutExercise.bulkCreate(workoutexercise_data, { validate: true });
+
+        console.log("Seed concluído com sucesso! A base de dados está pronta.");
+        process.exit(0);
+
+    } catch (error) {
+        console.error("Erro fatal durante o seed: ", error);
+        process.exit(1);
+    }
+};
+
+runSeed();

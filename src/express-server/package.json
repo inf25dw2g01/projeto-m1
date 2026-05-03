@@ -1,11 +1,12 @@
 {
-  "name":  "gym-tracker-api",
+  "name": "gym-tracker-api",
   "version": "1.0.0",
   "description": "API REST para o Sistema de Gestão de Ginásio. Permite gestão privada e partilha pública de planos de treino, bem como consulta pública do catálogo de exercícios.",
   "main": "index.js",
   "scripts": {
     "prestart": "npm install",
-    "start": "node index.js"
+    "start": "node scripts/seed.js && node index.js",
+    "seed": "node scripts/seed.js"
   },
   "keywords": [
     "openapi-generator",
@@ -14,16 +15,24 @@
   "license": "Unlicense",
   "private": true,
   "dependencies": {
-    "body-parser": "^1.19.0",
+    "axios": "^1.16.0",
+    "body-parser": "^1.20.5",
     "camelcase": "^5.3.1",
     "cookie-parser": "^1.4.4",
-    "cors": "^2.8.5",
-    "express": "^4.16.4",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^4.22.1",
     "express-openapi-validator": "^4.13.8",
+    "express-session": "^1.19.0",
     "js-yaml": "^3.3.0",
+    "mysql2": "^3.22.3",
     "ono": "^5.0.1",
     "openapi-sampler": "^1.0.0-beta.15",
-    "swagger-ui-express": "^4.0.2",
+    "passport": "^0.7.0",
+    "passport-github2": "^0.1.12",
+    "sequelize": "^6.37.8",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^4.6.3",
     "winston": "^3.2.1"
   },
   "devDependencies": {
