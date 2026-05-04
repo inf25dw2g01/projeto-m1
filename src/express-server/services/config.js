@@ -23,5 +23,10 @@ module.exports = {
         CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
         CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL
     },
+    DISCORD: {
+        CLIENT_ID: process.env.DISCORD_CLIENT_ID,
+        CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
+        CALLBACK_URL: process.env.DISCORD_CALLBACK_URL
+    },
     SESSION_SECRET: process.env.SESSION_SECRET || 'my top secret key'
 };

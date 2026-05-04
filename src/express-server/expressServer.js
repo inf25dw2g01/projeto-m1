@@ -12,6 +12,14 @@ const logger = require('./logger');
 const config = require('./config');
 const session = require("express-session");
 const passport = require('./config/passport');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+
+// Rate limit for API requests
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
 
 class ExpressServer {
   constructor(port, openApiYaml) {
@@ -33,6 +41,8 @@ class ExpressServer {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cookieParser());
+    this.app.use(helmet());
+    this.app.use('/api/', limiter);
     this.app.set('view engine', 'ejs');
     this.app.set('views', path.join(__dirname, 'public', 'views'));
     this.app.use(express.static(path.join(__dirname, 'public')));
@@ -52,16 +62,22 @@ class ExpressServer {
     this.app.get('/auth/github', passport.authenticate('github', { scope: ['user:email'] }));
     this.app.get('/auth/github/callback', 
         passport.authenticate('github', { failureRedirect: '/' }),
-        (req, res) => { res.redirect('/api-docs'); }
+        (req, res) => { res.redirect('/'); }
     );
 
     this.app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
     this.app.get('/auth/google/callback', 
         passport.authenticate('google', { failureRedirect: '/' }),
-        (req, res) => { res.redirect('/api-docs'); } 
+        (req, res) => { res.redirect('/'); } 
     );
 
-    this.app.get('/logout', (req, res, next) => {
+    this.app.get('/auth/discord', passport.authenticate('discord', { scope: ['identify', 'email'] }));
+    this.app.get('/auth/discord/callback', 
+        passport.authenticate('discord', { failureRedirect: '/' }),
+        (req, res) => { res.redirect('/'); }
+    );
+
+    this.app.get('/auth/logout', (req, res, next) => {
         req.logout((err) => { 
             if (err) { return next(err); } 
             res.redirect('/'); 

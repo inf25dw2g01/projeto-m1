@@ -1,6 +1,7 @@
 const passport = require('passport');
 const GitHubStrategy = require('passport-github2').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const DiscordStrategy = require('passport-discord').Strategy;
 const config = require('../services/config');
 const User = require('../models/User');
 
@@ -54,6 +55,27 @@ passport.use(new GoogleStrategy({
         return done(null, user);
     } catch (err) {
         console.error("Erro no Passport Google:", err);
+        return done(err, null);
+    }
+}));
+passport.use(new DiscordStrategy({
+    clientID: config.DISCORD.CLIENT_ID,
+    clientSecret: config.DISCORD.CLIENT_SECRET,
+    callbackURL: config.DISCORD.CALLBACK_URL,
+    scope: ['identify', 'email']
+}, async (accessToken, refreshToken, profile, done) => {
+    try {
+        const userEmail = profile.email || `${profile.id}@discord.com`;
+        const [user, created] = await User.findOrCreate({
+            where: { email: userEmail },
+            defaults: {
+                password: 'discord_authenticated',
+                firstName: profile.global_name || profile.username,
+                lastName: ' '
+            }
+        });
+        return done(null, user);
+    } catch (err) {
         return done(err, null);
     }
 }));

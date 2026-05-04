@@ -36,6 +36,14 @@ components:
           tokenUrl: "https://oauth2.googleapis.com/token"
           scopes: {}
 
+    OAuth2Discord:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: "http://localhost:8080/auth/discord"
+          tokenUrl: "https://discord.com/api/oauth2/token"
+          scopes: {}
+
   schemas:
     User:
       type: object
@@ -70,7 +78,6 @@ components:
       - title
       - description
 
-    # NOME NOVO: Representa a tabela pivô no GET
     WorkoutExercise:
       type: object
       properties:
@@ -156,6 +163,7 @@ paths:
       - ApiKeyAuth: []
       - OAuth2Github: []
       - OAuth2Google: []
+      - OAuth2Discord: []
       responses:
         '200':
           description: Dados do perfil do utilizador
@@ -174,6 +182,7 @@ paths:
       - ApiKeyAuth: []
       - OAuth2Github: []
       - OAuth2Google: []
+      - OAuth2Discord: []
       responses:
         '200':
           description: Array de Workouts públicos
@@ -194,6 +203,7 @@ paths:
       - ApiKeyAuth: []
       - OAuth2Github: []
       - OAuth2Google: []
+      - OAuth2Discord: []
       responses:
         '200':
           description: Array de Workouts do utilizador
@@ -214,6 +224,7 @@ paths:
       - ApiKeyAuth: []
       - OAuth2Github: []
       - OAuth2Google: []
+      - OAuth2Discord: []
       requestBody:
         required: true
         content:
@@ -234,6 +245,7 @@ paths:
       - ApiKeyAuth: []
       - OAuth2Github: []
       - OAuth2Google: []
+      - OAuth2Discord: []
       parameters:
       - name: id
         in: path
@@ -259,6 +271,7 @@ paths:
       - ApiKeyAuth: []
       - OAuth2Github: []
       - OAuth2Google: []
+      - OAuth2Discord: []
       parameters:
       - name: id
         in: path
@@ -284,6 +297,7 @@ paths:
       - ApiKeyAuth: []
       - OAuth2Github: []
       - OAuth2Google: []
+      - OAuth2Discord: []
       parameters:
       - name: id
         in: path
