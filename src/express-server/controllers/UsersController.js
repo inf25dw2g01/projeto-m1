@@ -12,7 +12,11 @@ const usersMeGET = async (request, response) => {
   await Controller.handleRequest(request, response, () => service.usersMeGET(request));
 };
 
+const usersMeApiKeyPOST = async (request, response) => {
+  await Controller.handleRequest(request, response, () => service.usersMeApiKeyPOST(request));
+};
 
 module.exports = {
   usersMeGET,
+  usersMeApiKeyPOST,
 };

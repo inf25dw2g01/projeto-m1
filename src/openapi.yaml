@@ -158,6 +158,9 @@ paths:
       tags:
       - Users
       summary: Devolve as informações do perfil do atleta autenticado
+      operationId: usersMeGet
+      x-openapi-router-controller: UsersController
+      x-openapi-router-service: UsersService
       security:
       - basicAuth: []
       - ApiKeyAuth: []
@@ -171,6 +174,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+
+  /users/me/apikey:
+    post:
+      tags:
+      - Users
+      summary: Gera uma nova API Key para o utilizador autenticado
+      operationId: usersMeApiKeyPOST
+      x-openapi-router-controller: UsersController
+      x-openapi-router-service: UsersService
+      security:
+      - basicAuth: []
+      - OAuth2Github: []
+      - OAuth2Google: []
+      - OAuth2Discord: []
+      responses:
+        '200':
+          description: Nova API Key gerada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  apiKey:
+                    type: string
+                    example: "a3f1b2c4d5e6..."
+        '401':
+          description: Não autenticado
 
   /workouts/public:
     get:
