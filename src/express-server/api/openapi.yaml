@@ -2,9 +2,7 @@ openapi: 3.0.0
 info:
   contact:
     name: Grupo inf25dw1g05
-  description: "API REST para o Sistema de Gestão de Ginásio. Permite gestão privada\
-    \ e partilha pública de planos de treino, bem como consulta pública do catálogo\
-    \ de exercícios."
+  description: "API REST para o Sistema de Gestão de Ginásio. Permite gestão privada e partilha pública de planos de treino, bem como consulta pública do catálogo de exercícios."
   title: Gym Tracker API
   version: 1.0.0
 servers:
@@ -14,6 +12,8 @@ paths:
   /users/me:
     get:
       operationId: usersMeGET
+      x-openapi-router-controller: UsersController
+      x-openapi-router-service: UsersService
       responses:
         "200":
           content:
@@ -30,6 +30,33 @@ paths:
       tags:
       - Users
       x-eov-operation-handler: controllers/UsersController
+  /users/me/apikey:
+    post:
+      tags:
+      - Users
+      summary: Gera uma nova API Key para o utilizador autenticado
+      operationId: usersMeApiKeyPOST
+      x-openapi-router-controller: UsersController
+      x-openapi-router-service: UsersService
+      x-eov-operation-handler: controllers/UsersController
+      security:
+      - basicAuth: []
+      - OAuth2Github: []
+      - OAuth2Google: []
+      - OAuth2Discord: []
+      responses:
+        '200':
+          description: Nova API Key gerada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  apiKey:
+                    type: string
+                    example: "a3f1b2c4d5e6..."
+        '401':
+          description: Não autenticado
   /workouts/public:
     get:
       operationId: workoutsPublicGET
