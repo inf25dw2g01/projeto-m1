@@ -444,6 +444,17 @@ input.mono {
   box-shadow: 0 0 24px rgba(255,77,109,0.2);
 }
 
+.btn-arrow {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  transform: rotate(45deg);
+  flex-shrink: 0;
+  margin-right: 2px;
+}
+
 /* ── AUTHENTICATED STATE ──────────────────────────────────── */
 .authenticated-state {
   display: flex;
@@ -468,10 +479,11 @@ input.mono {
   margin-bottom: 0.75rem;
 }
 
-.check-icon {
-  width: 36px;
-  height: 36px;
+.check-symbol {
+  font-size: 2rem;
+  line-height: 1;
   color: var(--accent-green);
+  font-weight: 700;
 }
 
 .auth-greeting { font-size: 0.9rem; color: var(--text-muted); letter-spacing: 0.05em; }
