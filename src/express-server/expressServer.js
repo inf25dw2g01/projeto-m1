@@ -60,6 +60,13 @@ class ExpressServer {
     this.app.use(passport.initialize());
     this.app.use(passport.session());
 
+     this.app.use((req, res, next) => {
+      if (req.user) {
+        console.log(`[AUTH LOG] Pedido recebido de: ${req.user.firstName} ${req.user.lastName} (${req.user.email})`);
+      }
+      next();
+    });
+
     this.app.get('/', (req, res) => {
         res.render('index', { user: req.user || null });
     });
@@ -96,13 +103,6 @@ class ExpressServer {
     this.app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(this.schema));
 
     this.app.use(apiKeyAuth);
-
-    this.app.use((req, res, next) => {
-      if (req.user) {
-        console.log(`[AUTH LOG] Pedido recebido de: ${req.user.firstName} ${req.user.lastName} (${req.user.email})`);
-      }
-      next();
-    });
 
     this.app.use(
       OpenApiValidator.middleware({
