@@ -23,12 +23,12 @@ passport.use(new GitHubStrategy({
         const [user, created] = await User.findOrCreate({
            where: { email: userEmail },
             defaults: {
-                password: 'github_authenticated',
+                password: null,
                 firstName: profile.displayName || profile.username,
                 lastName: '',}
         });
         
-        return done(null, profile);
+        return done(null, user);
     } catch (err) {
         return done(err, null);
     }
@@ -46,7 +46,7 @@ passport.use(new GoogleStrategy({
         const [user, created] = await User.findOrCreate({
             where: { email: userEmail },
             defaults: {
-                password: 'google_authenticated', 
+                password: null, 
                 firstName: profile.name?.givenName || profile.name?.displayName || 'Utilizador Google',
                 lastName: profile.name?.familyName || 'Google'
             }
@@ -69,7 +69,7 @@ passport.use(new DiscordStrategy({
         const [user, created] = await User.findOrCreate({
             where: { email: userEmail },
             defaults: {
-                password: 'discord_authenticated',
+                password: null,
                 firstName: profile.global_name || profile.username,
                 lastName: ' '
             }
