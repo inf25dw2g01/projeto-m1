@@ -63,7 +63,6 @@ class ExpressServer {
     this.app.use(passport.session());
 
     this.app.use((req, res, next) => {
-    this.app.use((req, res, next) => {
       if (req.user) {
         console.log(
           `[AUTH LOG] Pedido recebido de: ${req.user.firstName} ${req.user.lastName} (${req.user.email})`,
@@ -108,7 +107,7 @@ class ExpressServer {
         console.error('Erro na autenticação por API Key:', err);
         res.redirect('/');
     }
-});
+  });
 
     this.app.get(
       "/auth/github",
@@ -160,8 +159,6 @@ class ExpressServer {
         res.redirect("/");
       });
     });
-
-    this.app.use(apiKeyAuth);
 
     this.app.use(apiKeyAuth);
 
@@ -220,7 +217,7 @@ class ExpressServer {
       }),
     );
   }
-
+  
   launch() {
     // eslint-disable-next-line no-unused-vars
     this.app.use((err, req, res, next) => {
