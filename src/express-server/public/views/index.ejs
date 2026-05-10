@@ -24,6 +24,19 @@
     <!-- ============================================================ -->
     <% if (!user) { %>
 
+    <!-- MENSAGENS DE ERRO -->
+    <% if (typeof error !== 'undefined') { %>
+      <div class="error-message">
+        <% if (error === 'invalid_credentials') { %>
+          Credenciais inválidas. Verifique o email e password.
+        <% } else if (error === 'server_error') { %>
+          Erro no servidor. Tente novamente mais tarde.
+        <% } else { %>
+          Erro desconhecido. Tente novamente.
+        <% } %>
+      </div>
+    <% } %>
+
     <div class="auth-grid">
 
       <!-- BLOCO 1: BASIC AUTH -->
@@ -35,7 +48,7 @@
         <h2 class="card-title">Credenciais</h2>
         <p class="card-desc">Autentica com o teu email e password via HTTP Basic Auth.</p>
 
-        <form action="/auth/basic" method="POST" class="auth-form">
+        <form action="/auth/basic/login" method="POST" class="auth-form">
 
           <div class="field-group">
             <label for="email">Email</label>
@@ -177,6 +190,5 @@
   <footer class="site-footer">
     <span>API Auth Portal &mdash; Node.js + Passport.js</span>
   </footer>
-
 </body>
 </html>

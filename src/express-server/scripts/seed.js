@@ -4,38 +4,39 @@ const User = require('../models/User');
 const Workout = require('../models/Workout');
 const Exercise = require('../models/Exercise');
 const WorkoutExercise = require('../models/WorkoutExercise');
+const bcrypt = require("bcrypt");
 
 const user_data = [
-  { firstName: "John", lastName: "Baker", email: "aksjhad1@teste.pt", password: "hashed_password_1" },
-  { firstName: "Max", lastName: "Butler", email: "aksjhad2@teste.pt", password: "hashed_password_2" },
-  { firstName: "Ryan", lastName: "Fisher", email: "aksjhad3@teste.pt", password: "hashed_password_3" },
-  { firstName: "Robert", lastName: "Gray", email: "aksjhad4@teste.pt", password: "hashed_password_4" },
-  { firstName: "Sam", lastName: "Lewis", email: "aksjhad5@teste.pt", password: "hashed_password_5" },
-  { firstName: "Alice", lastName: "Smith", email: "alice.s@teste.pt", password: "hashed_password_6" },
-  { firstName: "David", lastName: "Miller", email: "d.miller@teste.pt", password: "hashed_password_7" },
-  { firstName: "Emma", lastName: "Wilson", email: "emma.w@teste.pt", password: "hashed_password_8" },
-  { firstName: "Lucas", lastName: "Brown", email: "l.brown@teste.pt", password: "hashed_password_9" },
-  { firstName: "Sophia", lastName: "Davis", email: "sophia.d@teste.pt", password: "hashed_password_10" },
-  { firstName: "James", lastName: "Garcia", email: "j.garcia@teste.pt", password: "hashed_password_11" },
-  { firstName: "Olivia", lastName: "Martinez", email: "o.martinez@teste.pt", password: "hashed_password_12" },
-  { firstName: "Daniel", lastName: "Hernandez", email: "d.hernandez@teste.pt", password: "hashed_password_13" },
-  { firstName: "Isabella", lastName: "Lopez", email: "i.lopez@teste.pt", password: "hashed_password_14" },
-  { firstName: "Matthew", lastName: "Gonzalez", email: "m.gonzalez@teste.pt", password: "hashed_password_15" },
-  { firstName: "Mia", lastName: "Wilson", email: "m.wilson@teste.pt", password: "hashed_password_16" },
-  { firstName: "Ethan", lastName: "Anderson", email: "e.anderson@teste.pt", password: "hashed_password_17" },
-  { firstName: "Charlotte", lastName: "Thomas", email: "c.thomas@teste.pt", password: "hashed_password_18" },
-  { firstName: "Alexander", lastName: "Taylor", email: "a.taylor@teste.pt", password: "hashed_password_19" },
-  { firstName: "Amelia", lastName: "Moore", email: "a.moore@teste.pt", password: "hashed_password_20" },
-  { firstName: "Michael", lastName: "Jackson", email: "m.jackson@teste.pt", password: "hashed_password_21" },
-  { firstName: "Emily", lastName: "White", email: "e.white@teste.pt", password: "hashed_password_22" },
-  { firstName: "Benjamin", lastName: "Harris", email: "b.harris@teste.pt", password: "hashed_password_23" },
-  { firstName: "Harper", lastName: "Martin", email: "h.martin@teste.pt", password: "hashed_password_24" },
-  { firstName: "William", lastName: "Thompson", email: "w.thompson@teste.pt", password: "hashed_password_25" },
-  { firstName: "Evelyn", lastName: "Garcia", email: "e.garcia2@teste.pt", password: "hashed_password_26" },
-  { firstName: "Sebastian", lastName: "Martinez", email: "s.martinez2@teste.pt", password: "hashed_password_27" },
-  { firstName: "Abigail", lastName: "Robinson", email: "a.robinson@teste.pt", password: "hashed_password_28" },
-  { firstName: "Jack", lastName: "Clark", email: "j.clark@teste.pt", password: "hashed_password_29" },
-  { firstName: "Luna", lastName: "Rodriguez", email: "l.rodriguez@teste.pt", password: "hashed_password_30" }
+  { firstName: "John", lastName: "Baker", email: "aksjhad1@teste.pt", password: "password1" },
+  { firstName: "Max", lastName: "Butler", email: "aksjhad2@teste.pt", password: "password2" },
+  { firstName: "Ryan", lastName: "Fisher", email: "aksjhad3@teste.pt", password: "password3" },
+  { firstName: "Robert", lastName: "Gray", email: "aksjhad4@teste.pt", password: "password4" },
+  { firstName: "Sam", lastName: "Lewis", email: "aksjhad5@teste.pt", password: "password5" },
+  { firstName: "Alice", lastName: "Smith", email: "alice.s@teste.pt", password: "password6" },
+  { firstName: "David", lastName: "Miller", email: "d.miller@teste.pt", password: "password7" },
+  { firstName: "Emma", lastName: "Wilson", email: "emma.w@teste.pt", password: "password8" },
+  { firstName: "Lucas", lastName: "Brown", email: "l.brown@teste.pt", password: "password9" },
+  { firstName: "Sophia", lastName: "Davis", email: "sophia.d@teste.pt", password: "password10" },
+  { firstName: "James", lastName: "Garcia", email: "j.garcia@teste.pt", password: "password11" },
+  { firstName: "Olivia", lastName: "Martinez", email: "o.martinez@teste.pt", password: "password12" },
+  { firstName: "Daniel", lastName: "Hernandez", email: "d.hernandez@teste.pt", password: "password13" },
+  { firstName: "Isabella", lastName: "Lopez", email: "i.lopez@teste.pt", password: "password14" },
+  { firstName: "Matthew", lastName: "Gonzalez", email: "m.gonzalez@teste.pt", password: "password15" },
+  { firstName: "Mia", lastName: "Wilson", email: "m.wilson@teste.pt", password: "password16" },
+  { firstName: "Ethan", lastName: "Anderson", email: "e.anderson@teste.pt", password: "password17" },
+  { firstName: "Charlotte", lastName: "Thomas", email: "c.thomas@teste.pt", password: "password18" },
+  { firstName: "Alexander", lastName: "Taylor", email: "a.taylor@teste.pt", password: "password19" },
+  { firstName: "Amelia", lastName: "Moore", email: "a.moore@teste.pt", password: "password20" },
+  { firstName: "Michael", lastName: "Jackson", email: "m.jackson@teste.pt", password: "password21" },
+  { firstName: "Emily", lastName: "White", email: "e.white@teste.pt", password: "password22" },
+  { firstName: "Benjamin", lastName: "Harris", email: "b.harris@teste.pt", password: "password23" },
+  { firstName: "Harper", lastName: "Martin", email: "h.martin@teste.pt", password: "password24" },
+  { firstName: "William", lastName: "Thompson", email: "w.thompson@teste.pt", password: "password25" },
+  { firstName: "Evelyn", lastName: "Garcia", email: "e.garcia2@teste.pt", password: "password26" },
+  { firstName: "Sebastian", lastName: "Martinez", email: "s.martinez2@teste.pt", password: "password27" },
+  { firstName: "Abigail", lastName: "Robinson", email: "a.robinson@teste.pt", password: "password28" },
+  { firstName: "Jack", lastName: "Clark", email: "j.clark@teste.pt", password: "password29" },
+  { firstName: "Luna", lastName: "Rodriguez", email: "l.rodriguez@teste.pt", password: "password30" }
 ];
 
 const workout_data = [
@@ -293,7 +294,7 @@ const runSeed = async () => {
         await sequelize.query('SET FOREIGN_KEY_CHECKS = 1');
         
         console.log("A inserir Utilizadores...");
-        await User.bulkCreate(user_data, { validate: true });
+        await User.bulkCreate(user_data, { validate: true, individualHooks: true });
 
         console.log("A inserir Exercícios...");
         await Exercise.bulkCreate(exercise_data, { validate: true });
