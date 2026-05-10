@@ -12,7 +12,7 @@ servers:
 
 components:
   securitySchemes:
-    basicAuth:
+    BasicAuth:
       type: http
       scheme: basic
     ApiKeyAuth:
@@ -162,7 +162,7 @@ paths:
       x-openapi-router-controller: UsersController
       x-openapi-router-service: UsersService
       security:
-      - basicAuth: []
+      - BasicAuth: []
       - ApiKeyAuth: []
       - OAuth2Github: []
       - OAuth2Google: []
@@ -184,7 +184,7 @@ paths:
       x-openapi-router-controller: UsersController
       x-openapi-router-service: UsersService
       security:
-      - basicAuth: []
+      - BasicAuth: []
       - OAuth2Github: []
       - OAuth2Google: []
       - OAuth2Discord: []
@@ -208,7 +208,7 @@ paths:
       - Workouts
       summary: Devolve todos os planos de treino PÚBLICOS da comunidade
       security:
-      - basicAuth: []
+      - BasicAuth: []
       - ApiKeyAuth: []
       - OAuth2Github: []
       - OAuth2Google: []
@@ -229,7 +229,7 @@ paths:
       - Workouts
       summary: Devolve todos os treinos do utilizador autenticado (Públicos e Privados)
       security:
-      - basicAuth: []
+      - BasicAuth: []
       - ApiKeyAuth: []
       - OAuth2Github: []
       - OAuth2Google: []
@@ -250,7 +250,7 @@ paths:
       - Workouts
       summary: Cria um novo plano de treino para o utilizador autenticado
       security:
-      - basicAuth: []
+      - BasicAuth: []
       - ApiKeyAuth: []
       - OAuth2Github: []
       - OAuth2Google: []
@@ -271,7 +271,7 @@ paths:
       - Workouts
       summary: Devolve os detalhes de um treino específico
       security:
-      - basicAuth: []
+      - BasicAuth: []
       - ApiKeyAuth: []
       - OAuth2Github: []
       - OAuth2Google: []
@@ -297,7 +297,7 @@ paths:
       - Workouts
       summary: Atualiza um plano de treino (Apenas o autor pode atualizar)
       security:
-      - basicAuth: []
+      - BasicAuth: []
       - ApiKeyAuth: []
       - OAuth2Github: []
       - OAuth2Google: []
@@ -323,7 +323,7 @@ paths:
       - Workouts
       summary: Apaga um plano de treino (Apenas o autor pode apagar)
       security:
-      - basicAuth: []
+      - BasicAuth: []
       - ApiKeyAuth: []
       - OAuth2Github: []
       - OAuth2Google: []

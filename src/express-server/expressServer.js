@@ -1,25 +1,27 @@
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
-const swaggerUI = require('swagger-ui-express');
-const jsYaml = require('js-yaml');
-const express = require('express');
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
-const OpenApiValidator = require('express-openapi-validator');
-const logger = require('./logger');
-const config = require('./config');
+const http = require("http");
+const fs = require("fs");
+const path = require("path");
+const swaggerUI = require("swagger-ui-express");
+const jsYaml = require("js-yaml");
+const express = require("express");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
+const OpenApiValidator = require("express-openapi-validator");
+const logger = require("./logger");
+const config = require("./config");
 const session = require("express-session");
-const passport = require('./config/passport');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
-const apiKeyAuth = require('./middleware/ApiKeyAuth');
+const passport = require("./config/passport");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const apiKeyAuth = require("./middleware/ApiKeyAuth");
+const BasicAuth = require("./middleware/BasicAuth");
+const bcrypt = require("bcrypt");
+const User = require("./models/User");
 
-// Rate limit for API requests
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  max: 100, // limit each IP to 100 requests per windowMs
 });
 
 class ExpressServer {
@@ -30,7 +32,7 @@ class ExpressServer {
     try {
       this.schema = jsYaml.safeLoad(fs.readFileSync(openApiYaml));
     } catch (e) {
-      logger.error('failed to start Express Server', e.message);
+      logger.error("failed to start Express Server", e.message);
     }
     this.setupMiddleware();
   }
@@ -38,23 +40,23 @@ class ExpressServer {
   setupMiddleware() {
     // this.setupAllowedMedia();
     this.app.use(cors());
-    this.app.use(bodyParser.json({ limit: '14MB' }));
+    this.app.use(bodyParser.json({ limit: "14MB" }));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cookieParser());
     this.app.use(
       helmet({
         contentSecurityPolicy: false, // Desativar para poder correr os scrips do ejs
-      })
-  );
-    this.app.use('/api/', limiter);
-    this.app.set('view engine', 'ejs');
-    this.app.set('views', path.join(__dirname, 'public', 'views'));
-    this.app.use(express.static(path.join(__dirname, 'public')));
+      }),
+    );
+    this.app.use("/api/", limiter);
+    this.app.set("view engine", "ejs");
+    this.app.set("views", path.join(__dirname, "public", "views"));
+    this.app.use(express.static(path.join(__dirname, "public")));
     const sessionOptions = {
-        secret: "my top secret key",
-        resave: false,
-        saveUninitialized: true
+      secret: "my top secret key",
+      resave: false,
+      saveUninitialized: true,
     };
     this.app.use(session(sessionOptions));
     this.app.use(passport.initialize());
@@ -62,7 +64,9 @@ class ExpressServer {
 
     this.app.use((req, res, next) => {
       if (req.user) {
-        console.log(`[AUTH LOG] Pedido recebido de: ${req.user.firstName} ${req.user.lastName} (${req.user.email})`);
+        console.log(
+          `[AUTH LOG] Pedido recebido de: ${req.user.firstName} ${req.user.lastName} (${req.user.email})`,
+        );
       }
       next();
     });
@@ -103,46 +107,107 @@ class ExpressServer {
         console.error('Erro na autenticação por API Key:', err);
         res.redirect('/');
     }
-});
+  });
 
-    this.app.get('/auth/github', passport.authenticate('github', { scope: ['user:email'] }));
-    this.app.get('/auth/github/callback', 
-        passport.authenticate('github', { failureRedirect: '/' }),
-        (req, res) => { 
+    this.app.get(
+      "/auth/github",
+      passport.authenticate("github", { scope: ["user:email"] }),
+    );
+    this.app.get(
+      "/auth/github/callback",
+      passport.authenticate("github", { failureRedirect: "/" }),
+      (req, res) => {
+        
           req.session.authMethod = 'github';
-          res.redirect('/'); }
+          res.redirect("/");
+      },
     );
 
-    this.app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-    this.app.get('/auth/google/callback', 
-        passport.authenticate('google', { failureRedirect: '/' }),
-        (req, res) => { 
+    this.app.get(
+      "/auth/google",
+      passport.authenticate("google", { scope: ["profile", "email"] }),
+    );
+    this.app.get(
+      "/auth/google/callback",
+      passport.authenticate("google", { failureRedirect: "/" }),
+      (req, res) => {
+        
           req.session.authMethod = 'google';
-          res.redirect('/'); } 
+          res.redirect("/");
+      },
     );
 
-    this.app.get('/auth/discord', passport.authenticate('discord', { scope: ['identify', 'email'] }));
-    this.app.get('/auth/discord/callback', 
-        passport.authenticate('discord', { failureRedirect: '/' }),
-        (req, res) => { 
+    this.app.get(
+      "/auth/discord",
+      passport.authenticate("discord", { scope: ["identify", "email"] }),
+    );
+    this.app.get(
+      "/auth/discord/callback",
+      passport.authenticate("discord", { failureRedirect: "/" }),
+      (req, res) => {
+        
           req.session.authMethod = 'discord';
-          res.redirect('/'); }
+          res.redirect("/");
+      },
     );
 
-    this.app.get('/auth/logout', (req, res, next) => {
-        req.logout((err) => { 
-            if (err) { return next(err); } 
-            res.redirect('/'); 
-        });
+    this.app.get("/auth/logout", (req, res, next) => {
+      req.logout((err) => {
+        if (err) {
+          return next(err);
+        }
+        res.redirect("/");
+      });
     });
 
     this.app.use(apiKeyAuth);
 
-    this.app.get('/hello', (req, res) => res.send(`Hello World. path: ${this.openApiPath}`));
+    this.app.get("/hello", (req, res) =>
+      res.send(`Hello World. path: ${this.openApiPath}`)
+    );
     // Send the openapi document *AS GENERATED BY THE GENERATOR*
-    this.app.get('/openapi', (req, res) => res.sendFile(this.openApiPath));
+    this.app.get("/openapi", (req, res) => res.sendFile(this.openApiPath));
     // View the openapi document in a visual interface. Should be able to test from this page
-    this.app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(this.schema));
+    this.app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(this.schema));
+
+    this.app.use(BasicAuth);
+
+    this.app.post(
+      "/auth/basic/login",
+      express.urlencoded({ extended: true }),
+      async (req, res) => {
+        const { email, password } = req.body;
+
+        try {
+          const user = await User.findOne({ where: { email } });
+
+          if (!user) {
+            return res.redirect("/?error=invalid_credentials");
+          }
+
+          const match = await bcrypt.compare(password, user.password);
+
+          if (!match) {
+            return res.redirect("/?error=invalid_credentials");
+          }
+
+          const loginUser = {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+          };
+
+          req.login(loginUser, (err) => {
+            if (err) return res.redirect("/?error=server_error");
+            res.redirect("/");
+          });
+        } catch (err) {
+          console.error("Basic auth login error:", err);
+          res.redirect("/?error=server_error");
+        }
+      },
+    );
 
     this.app.use(
       OpenApiValidator.middleware({
@@ -152,14 +217,14 @@ class ExpressServer {
       }),
     );
   }
-
+  
   launch() {
     // eslint-disable-next-line no-unused-vars
     this.app.use((err, req, res, next) => {
       // format errors
       res.status(err.status || 500).json({
         message: err.message || err,
-        errors: err.errors || '',
+        errors: err.errors || "",
       });
     });
 
