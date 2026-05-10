@@ -18,6 +18,7 @@ const apiKeyAuth = require("./middleware/ApiKeyAuth");
 const BasicAuth = require("./middleware/BasicAuth");
 const bcrypt = require("bcrypt");
 const User = require("./models/User");
+const { error } = require("console");
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -84,7 +85,8 @@ class ExpressServer {
         authMethod: req.session.authMethod || null,
         apikey_status: req.query.apikey_status || null,
         apikey_name: req.query.name || null,
-        apikey_email: req.query.email || null
+        apikey_email: req.query.email || null,
+        error: req.query.error
       });
     });
 
@@ -208,6 +210,29 @@ class ExpressServer {
         }
       },
     );
+
+    this.app.get("/auth/register", (req, res) => {
+      res.render("register", { error: req.query.error });
+    });
+
+    this.app.post("/auth/register", express.urlencoded({ extended: true }), async (req, res) => {
+      const { firstName, lastName, email, password } = req.body;
+      if (!firstName || !email || !password) {
+        return res.redirect("/auth/register?error=missing_fields");
+      }
+      try {
+        const existingUser = await User.findOne({ where: { email } });
+        if (existingUser) {
+          return res.redirect("/auth/register?error=email_exists");
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await User.create({ firstName, lastName, email, password});
+        res.redirect("/?apikey_status=registered");
+      } catch (err) {
+        console.error("Error checking existing user:", err);
+        return res.redirect("/auth/register?error=server_error");
+      }
+    });
 
     this.app.use(
       OpenApiValidator.middleware({

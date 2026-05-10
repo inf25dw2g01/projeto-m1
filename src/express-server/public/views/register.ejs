@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Auth Portal</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+  <div class="grid-overlay"></div>
+
+  <main class="container">
+
+    <!-- HEADER -->
+    <header class="hero">
+      <div class="hero-badge">REST API</div>
+      <h1 class="hero-title">Auth<span class="accent">Portal</span></h1>
+      <p class="hero-sub">Acesso seguro. Múltiplos métodos. Uma porta de entrada.</p>
+    </header>
+
+    <!-- MENSAGENS DE ERRO -->
+    <% if (typeof error !== 'undefined') { %>
+      <div class="error-message">
+        <% if (error === 'email_exists') { %>
+          Email já registrado. Tente outro email.
+        <% } else if (error === 'missing_fields') { %>
+          Por favor, preencha todos os campos.
+        <% } else if (error === 'server_error') { %>
+          Erro no servidor. Tente novamente mais tarde.
+        <% } else { %>
+          Ocorreu um erro desconhecido. Tente novamente.
+        <% } %>
+      </div>
+    <% } %>
+
+    <div class="auth-grid single-card">
+      <div class="auth-card" id="card-basic">
+        <div class="card-label">
+          <span class="label-dot dot-cyan"></span>
+          Novo Utilizador
+        </div>
+        <h2 class="card-title">Registo</h2>
+        <p class="card-desc">Cria uma conta com o teu email e password.</p>
+
+        <form action="/auth/register" method="POST" class="auth-form">
+        
+            <div class="field-group">
+              <label for="email">Primeiro Nome</label>
+              <div class="input-wrapper">
+                <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                  <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                <input type="text" id="firstName" name="firstName" placeholder="Primeiro Nome" required autocomplete="given-name" />
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label for="email">Último Nome</label>
+              <div class="input-wrapper">
+                <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                  <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                <input type="text" id="lastName" name="lastName" placeholder="Último Nome" autocomplete="family-name" />
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label for="email">Email</label>
+              <div class="input-wrapper">
+                <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                  <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                <input type="email" id="email" name="email" placeholder="utilizador@exemplo.com" required autocomplete="email" />
+              </div>
+            </div>
+
+          <div class="field-group">
+            <label for="password">Password</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+              <input type="password" id="password" name="password" placeholder="••••••••••" required minlength="6" />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="confirmPassword">Confirmar Password</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+              <input type="password" id="confirmPassword" name="confirmPassword" placeholder="••••••••••" required minlength="6" />
+            </div>
+          </div>
+
+          <div id="matchContainer" style="margin-top: 8px; display: none; font-size: 0.85rem; padding: 6px; border-radius: 4px;">
+            <span id="matchText"></span>
+          </div>
+
+          <div id="strengthContainer" style="margin-top: 8px; display: none;">
+            <div style="display: flex; gap: 4px; margin-bottom: 5px;">
+              <div class="strength-bar" id="strengthBar1" style="flex: 1; height: 4px; background: #ddd; border-radius: 2px;"></div>
+              <div class="strength-bar" id="strengthBar2" style="flex: 1; height: 4px; background: #ddd; border-radius: 2px;"></div>
+              <div class="strength-bar" id="strengthBar3" style="flex: 1; height: 4px; background: #ddd; border-radius: 2px;"></div>
+            </div>
+            <p id="strengthText" style="font-size: 0.85rem; color: #999; margin: 0;">Força: <span id="strengthLevel">-</span></p>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            <span>Registar</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+            </svg>
+          </button>
+
+          <button type="button" class="btn btn-primary" onclick="window.location.href='/'">
+            <span>Já tenho conta</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+            </svg>
+          </button>
+
+        </form>
+      </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>API Auth Portal &mdash; Node.js + Passport.js</span>
+  </footer>
+
+  <script>
+  // Calcula a força da password
+  function calculatePasswordStrength(password) {
+    let strength = 0;
+    
+    if (password.length >= 6) strength += 1;
+    if (password.length >= 8) strength += 1;
+    if (password.length >= 12) strength += 1;
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength += 1;
+    if (/\d/.test(password)) strength += 1;
+    if (/[^a-zA-Z\d]/.test(password)) strength += 1;
+    
+    if (strength <= 2) return { level: 'Fraca', value: 1 };
+    if (strength <= 4) return { level: 'Média', value: 2 };
+    return { level: 'Forte', value: 3 };
+  }
+
+  // Atualiza oindicador de força
+  function updatePasswordStrength() {
+    const password = document.getElementById('password').value;
+    const strengthContainer = document.getElementById('strengthContainer');
+    const strengthLevel = document.getElementById('strengthLevel');
+    
+    if (password.length === 0) {
+      strengthContainer.style.display = 'none';
+      return;
+    }
+    
+    strengthContainer.style.display = 'block';
+    const strength = calculatePasswordStrength(password);
+    
+    // Reset all bars
+    document.getElementById('strengthBar1').style.background = '#ddd';
+    document.getElementById('strengthBar2').style.background = '#ddd';
+    document.getElementById('strengthBar3').style.background = '#ddd';
+    
+    // Set colors based on strength
+    if (strength.value >= 1) document.getElementById('strengthBar1').style.background = '#ff6b6b';
+    if (strength.value >= 2) {
+      document.getElementById('strengthBar2').style.background = '#ffd93d';
+      document.getElementById('strengthBar1').style.background = '#ffd93d';
+    }
+    if (strength.value >= 3) {
+      document.getElementById('strengthBar3').style.background = '#6bcf7f';
+      document.getElementById('strengthBar1').style.background = '#6bcf7f';
+      document.getElementById('strengthBar2').style.background = '#6bcf7f';
+    }
+    
+    strengthLevel.textContent = strength.level;
+    strengthLevel.style.color = 
+      strength.value === 1 ? '#ff6b6b' : 
+      strength.value === 2 ? '#ffd93d' : 
+      '#6bcf7f';
+  }
+
+  // Função para validar correspondência de passwords
+  function updatePasswordMatch() {
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const matchContainer = document.getElementById('matchContainer');
+    const matchText = document.getElementById('matchText');
+    
+    if (confirmPassword.length === 0) {
+      matchContainer.style.display = 'none';
+      return;
+    }
+    
+    matchContainer.style.display = 'block';
+    
+    if (password === confirmPassword && password.length > 0) {
+      matchText.textContent = '✓ Passwords coincidem';
+      matchContainer.style.background = 'rgba(107, 199, 127, 0.15)';
+      matchContainer.style.color = '#6bcf7f';
+    } else {
+      matchText.textContent = '✗ Passwords não coincidem';
+      matchContainer.style.background = 'rgba(255, 107, 107, 0.15)';
+      matchContainer.style.color = '#ff6b6b';
+    }
+  }
+
+  // Event listeners
+  const passwordInput = document.getElementById('password');
+  const confirmPasswordInput = document.getElementById('confirmPassword');
+  
+  passwordInput.addEventListener('input', updatePasswordStrength);
+  passwordInput.addEventListener('input', updatePasswordMatch);
+  confirmPasswordInput.addEventListener('input', updatePasswordMatch);
+
+  // Validação ao submeter
+  document.getElementById('registerForm').addEventListener('submit', function(e) {
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const firstName = document.getElementById('firstName').value;
+    const lastName = document.getElementById('lastName').value;
+    const email = document.getElementById('email').value;
+
+    // Validar campos vazios
+    if (!firstName.trim() || !lastName.trim() || !email.trim()) {
+      e.preventDefault();
+      alert('Todos os campos são obrigatórios!');
+      return false;
+    }
+
+    // Validar força mínima
+    const strength = calculatePasswordStrength(password);
+    if (strength.value < 2) {
+      e.preventDefault();
+      alert('A password deve ter pelo menos 8 caracteres com maiúsculas, minúsculas e números!');
+      return false;
+    }
+
+    // Validar correspondência
+    if (password !== confirmPassword) {
+      e.preventDefault();
+      alert('As passwords não correspondem!');
+      return false;
+    }
+
+    return true;
+  });
+</script>
+</body>
+</html>

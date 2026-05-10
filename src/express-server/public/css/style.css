@@ -266,6 +266,18 @@ input.mono {
   letter-spacing: 0.05em;
 }
 
+.auth-grid.single-card {
+  grid-template-columns: 1fr;
+  justify-items: center;
+  width: 100%;
+}
+
+.auth-grid.single-card .auth-card {
+  width: min(560px, 100%);
+  max-width: 640px;
+  padding: 2.5rem 2.5rem 3rem;
+}
+
 /* ── DIVIDERS ─────────────────────────────────────────────── */
 .divider-vertical {
   display: flex;
