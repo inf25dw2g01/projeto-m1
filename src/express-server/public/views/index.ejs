@@ -105,6 +105,29 @@
 
     </div><!-- /auth-grid -->
 
+
+    <% if (typeof apikey_status !== 'undefined' && apikey_status === 'valid') { %>
+      <div class="apikey-result apikey-valid">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <div>
+          <p class="result-title">API Key válida</p>
+          <p class="result-sub">Bem-vindo de volta, <strong><%= apikey_name %></strong> · <%= apikey_email %></p>
+        </div>
+      </div>
+    <% } else if (typeof apikey_status !== 'undefined' && apikey_status === 'invalid') { %>
+      <div class="apikey-result apikey-invalid">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <div>
+          <p class="result-title">API Key inválida</p>
+          <p class="result-sub">Verifica a chave e tenta novamente.</p>
+        </div>
+      </div>
+    <% } %>
+
     <!-- DIVISOR HORIZONTAL -->
     <div class="divider-horizontal">
       <span>Login Social</span>
@@ -162,6 +185,14 @@
       <div class="auth-meta">
         <span class="meta-tag">&#9679; Sessão ativa</span>
       </div>
+
+      <% if (apiKey && authMethod !== 'apikey') { %>
+        <div class="apikey-display">
+          <p class="apikey-label">A tua API Key:</p>
+          <code class="apikey-value"><%= apiKey %></code>
+          <p class="apikey-hint">Copia esta chave. Usa-a sem fazer login.</p>
+        </div>
+      <% } %>
 
       <a href="/auth/logout" class="btn btn-logout">
         <span class="btn-arrow"></span>
