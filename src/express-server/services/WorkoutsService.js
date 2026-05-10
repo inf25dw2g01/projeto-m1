@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 const Service = require('./Service');
 const Workout = require('../models/Workout');
+const Exercise = require('../models/Exercise');
+const WorkoutExercise = require('../models/WorkoutExercise');
 const User = require('../models/User');
 
 const getAuthenticatedUser = async (req) => {
@@ -15,7 +17,7 @@ const getAuthenticatedUser = async (req) => {
   if (!user) {
     const apiKey = req.headers['x-api-key'];
     if (apiKey) {
-      //user = await User.findOne({ where: { apiKey: apiKey } });
+      user = await User.findOne({ where: { apiKey: apiKey } });
     }
   }
 
@@ -50,6 +52,7 @@ const workoutsIdDELETE = (req) => new Promise(async (resolve, reject) => {
         return reject(Service.rejectResponse('Não tens permissão para apagar este treino', 403));
       }
 
+      await WorkoutExercise.destroy({ where: { WorkoutId: workout.id } });
       await workout.destroy();
       resolve(Service.successResponse({ message: "Treino apagado com sucesso" }));
     } catch (e) {
@@ -64,7 +67,10 @@ const workoutsIdDELETE = (req) => new Promise(async (resolve, reject) => {
 * */
 const workoutsIdGET = (req) => new Promise(async (resolve, reject) => {
     try {
-      const workout = await Workout.findByPk(req.params.id);
+      const workout = await Workout.findByPk(req.params.id,
+        {
+           include: [{ model: Exercise, through: { attributes: ['sets', 'reps'] } }]
+        });
       
       if (!workout) {
         return reject(Service.rejectResponse('Treino não encontrado', 404));
@@ -102,9 +108,31 @@ const workoutsIdPUT = (req) => new Promise(async (resolve, reject) => {
       if (workout.UserId !== user.id) {
         return reject(Service.rejectResponse('Não tens permissão para editar este treino', 403));
       }
+      const {title , description , visibility, exercises} = req.body;
+      await workout.update({
+            title: title || workout.title,
+            description: description !== undefined ? description : workout.description,
+            visibility: visibility || workout.visibility
+      });
 
-      await workout.update(req.body);
-      resolve(Service.successResponse(workout));
+      if (exercises && exercises.length > 0) {
+          await WorkoutExercise.destroy({ where: { WorkoutId: workout.id } });
+          for (const ex of exercises) {
+            const exercise = await Exercise.findByPk(ex.exerciseId);
+            if (exercise) {
+              await WorkoutExercise.create({
+                  WorkoutId: workout.id,
+                  ExerciseId: ex.exerciseId,
+                  sets: ex.sets,
+                  reps: ex.reps
+              });
+            }
+          }
+        }
+        const result = await Workout.findByPk(workout.id, {
+          include: [{ model: Exercise, through: { attributes: ['sets', 'reps'] } }]
+        });
+      resolve(Service.successResponse(result));
     } catch (e) {
       reject(Service.rejectResponse(e.message || 'Erro interno', e.status || 500));
     }
@@ -117,7 +145,9 @@ const workoutsIdPUT = (req) => new Promise(async (resolve, reject) => {
 const workoutsMeGET = (req) => new Promise(async (resolve, reject) => {
     try {
       const user = await getAuthenticatedUser(req);
-      const workouts = await Workout.findAll({ where: { UserId: user.id } });
+      const workouts = await Workout.findAll({ where: { UserId: user.id }, 
+        include: [{ model: Exercise, through: { attributes: ['sets', 'reps'] } }]
+      });
       resolve(Service.successResponse(workouts));
     } catch (e) {
       reject(Service.rejectResponse(e.message || 'Erro interno', e.status || 500));
@@ -149,7 +179,9 @@ const workoutsPOST = (req) => new Promise(async (resolve, reject) => {
 * */
 const workoutsPublicGET = (req) => new Promise(async (resolve, reject) => {
     try {
-      const workouts = await Workout.findAll({ where: { visibility: 'public' } });
+      const workouts = await Workout.findAll({ where: { visibility: 'public' },
+        include:[{model : Exercise, through: {attributes:['sets', 'reps']}}]
+      });
       resolve(Service.successResponse(workouts));
     } catch (e) {
       reject(Service.rejectResponse(e.message || 'Erro interno', 500));

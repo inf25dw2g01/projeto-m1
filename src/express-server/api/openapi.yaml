@@ -30,36 +30,12 @@ paths:
       tags:
       - Users
       x-eov-operation-handler: controllers/UsersController
-  /users/me/apikey:
-    post:
-      tags:
-      - Users
-      summary: Gera uma nova API Key para o utilizador autenticado
-      operationId: usersMeApiKeyPOST
-      x-openapi-router-controller: UsersController
-      x-openapi-router-service: UsersService
-      x-eov-operation-handler: controllers/UsersController
-      security:
-      - basicAuth: []
-      - OAuth2Github: []
-      - OAuth2Google: []
-      - OAuth2Discord: []
-      responses:
-        '200':
-          description: Nova API Key gerada
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  apiKey:
-                    type: string
-                    example: "a3f1b2c4d5e6..."
-        '401':
-          description: Não autenticado
+
   /workouts/public:
     get:
       operationId: workoutsPublicGET
+      x-openapi-router-controller: WorkoutsController
+      x-openapi-router-service: WorkoutsService
       responses:
         "200":
           content:
@@ -81,6 +57,8 @@ paths:
   /workouts/me:
     get:
       operationId: workoutsMeGET
+      x-openapi-router-controller: WorkoutsController
+      x-openapi-router-service: WorkoutsService
       responses:
         "200":
           content:
@@ -102,6 +80,8 @@ paths:
   /workouts:
     post:
       operationId: workoutsPOST
+      x-openapi-router-controller: WorkoutsController
+      x-openapi-router-service: WorkoutsService
       requestBody:
         content:
           application/json:
@@ -123,6 +103,8 @@ paths:
   /workouts/{id}:
     delete:
       operationId: workoutsIdDELETE
+      x-openapi-router-controller: WorkoutsController
+      x-openapi-router-service: WorkoutsService
       parameters:
       - explode: false
         in: path
@@ -145,6 +127,8 @@ paths:
       x-eov-operation-handler: controllers/WorkoutsController
     get:
       operationId: workoutsIdGET
+      x-openapi-router-controller: WorkoutsController
+      x-openapi-router-service: WorkoutsService
       parameters:
       - explode: false
         in: path
@@ -173,6 +157,8 @@ paths:
       x-eov-operation-handler: controllers/WorkoutsController
     put:
       operationId: workoutsIdPUT
+      x-openapi-router-controller: WorkoutsController
+      x-openapi-router-service: WorkoutsService
       parameters:
       - explode: false
         in: path
