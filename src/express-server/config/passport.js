@@ -4,6 +4,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const DiscordStrategy = require('passport-discord').Strategy;
 const config = require('../services/config');
 const User = require('../models/User');
+const crypto = require ('crypto');
 
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((obj, done) => done(null, obj));
@@ -25,7 +26,9 @@ passport.use(new GitHubStrategy({
             defaults: {
                 password: null,
                 firstName: profile.displayName || profile.username,
-                lastName: '',}
+                lastName: '',
+                apiKey: crypto.randomBytes(32).toString('hex')
+            }
         });
         
         return done(null, user);
@@ -48,7 +51,8 @@ passport.use(new GoogleStrategy({
             defaults: {
                 password: null, 
                 firstName: profile.name?.givenName || profile.name?.displayName || 'Utilizador Google',
-                lastName: profile.name?.familyName || 'Google'
+                lastName: profile.name?.familyName || 'Google',
+                apiKey: crypto.randomBytes(32).toString('hex')
             }
         });
         
@@ -71,7 +75,8 @@ passport.use(new DiscordStrategy({
             defaults: {
                 password: null,
                 firstName: profile.global_name || profile.username,
-                lastName: ' '
+                lastName: ' ',
+                apiKey: crypto.randomBytes(32).toString('hex')
             }
         });
         return done(null, user);
