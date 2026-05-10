@@ -20,6 +20,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/User"
           description: Dados do perfil do utilizador
       security:
       - basicAuth: []
@@ -44,6 +47,14 @@ paths:
                 items:
                   $ref: "#/components/schemas/Workout"
                 type: array
+            application/xml:
+              schema:
+                type: array
+                xml:
+                  name: workouts
+                  wrapped: true
+                items:
+                  $ref: "#/components/schemas/Workout"
           description: Array de Workouts públicos
       security:
       - basicAuth: []
@@ -67,6 +78,14 @@ paths:
                 items:
                   $ref: "#/components/schemas/Workout"
                 type: array
+            application/xml:
+              schema:
+                type: array
+                xml:
+                  name: workouts
+                  wrapped: true
+                items:
+                  $ref: "#/components/schemas/Workout"
           description: Array de Workouts do utilizador
       security:
       - basicAuth: []
@@ -85,6 +104,9 @@ paths:
       requestBody:
         content:
           application/json:
+            schema:
+              $ref: "#/components/schemas/WorkoutRequest"
+          application/xml:
             schema:
               $ref: "#/components/schemas/WorkoutRequest"
         required: true
@@ -143,6 +165,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Workout"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Workout"
           description: Detalhes do treino
         "403":
           description: Acesso negado
@@ -172,6 +197,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/WorkoutRequest"
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/WorkoutRequest"
         required: true
       responses:
         "200":
@@ -196,6 +224,15 @@ paths:
                 items:
                   $ref: "#/components/schemas/Exercise"
                 type: array
+            application/xml:
+              schema:
+                type: array
+                xml:
+                  name: exercises
+                  wrapped: true
+                items:
+                  $ref: "#/components/schemas/Exercise"
+                example: <exercise> <id>1</id> <title>Bench Press</title> <description>Chest exercise</description> </exercise>
           description: Array com todos os exercícios
       security: []
       summary: Devolve a lista global de exercícios disponíveis
@@ -219,6 +256,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exercise"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Exercise"
           description: Detalhes do exercício
       security: []
       summary: Devolve os detalhes de um exercício específico
@@ -228,6 +268,8 @@ paths:
 components:
   schemas:
     User:
+      xml:
+        name: user
       example:
         firstName: firstName
         lastName: lastName
@@ -251,6 +293,8 @@ components:
       - firstName
       type: object
     Exercise:
+      xml:
+        name: exercise
       example:
         description: description
         id: 5
@@ -268,6 +312,8 @@ components:
       - title
       type: object
     WorkoutExercise:
+      xml:
+        name: workoutExercise
       example:
         reps: 5
         Exercise:
@@ -286,6 +332,8 @@ components:
           $ref: "#/components/schemas/Exercise"
       type: object
     Workout:
+      xml:
+        name: workout
       example:
         visibility: public
         UserId: 6
@@ -324,15 +372,20 @@ components:
           format: int64
           type: integer
         Exercises:
+          type: array
           description: Lista de exercícios com as respetivas séries e repetições
+          xml:
+            wrapped: true
+            name: exercises
           items:
             $ref: "#/components/schemas/WorkoutExercise"
-          type: array
       required:
       - title
       - visibility
       type: object
     WorkoutExerciseRequest:
+      xml:
+        name: workoutExerciseRequest
       example:
         reps: 1
         exerciseId: 0
@@ -350,6 +403,8 @@ components:
       - sets
       type: object
     WorkoutRequest:
+      xml:
+        name: workoutRequest
       example:
         visibility: private
         exercises:
@@ -373,10 +428,13 @@ components:
           - private
           type: string
         exercises:
+          type: array
           description: Array com os exercícios a associar (incluindo séries e repetições)
+          xml:
+            wrapped: true
+            name: exercises
           items:
             $ref: "#/components/schemas/WorkoutExerciseRequest"
-          type: array
       required:
       - title
       type: object
