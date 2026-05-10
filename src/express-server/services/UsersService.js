@@ -6,18 +6,18 @@ const User = require("../models/User");
 *
 * returns User
 * */
-const getAuthenticatedUser = async (req) => {
-  if (req.user) {
-    user = req.user;
-  }
-  throw {status:401, Message: "Acesso negado. Autentica-te via OAuth, API Key ou Basic Auth."};
-};
-
 const usersMeGET = (req) => new Promise(async (resolve, reject) => {
     try {
-      const user = await getAuthenticatedUser(req);
+      if (!req.user){
+        return reject(Service.rejectResponse('Não autenticado',401));
+      }
       
-      resolve(Service.successResponse(user));
+      resolve(Service.successResponse({
+        id: req.user.id,
+        firstName: req.user.firstName,
+        lastName: req.user.lastName,
+        email: req.user.email
+      }));
     } catch (e) {
       reject(Service.rejectResponse(e.message || 'Erro interno', e.status || 500));
     }
