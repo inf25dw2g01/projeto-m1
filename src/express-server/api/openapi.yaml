@@ -12,15 +12,11 @@ paths:
   /users/me:
     get:
       operationId: usersMeGET
-      x-openapi-router-controller: UsersController
-      x-openapi-router-service: UsersService
+      x-eov-operation-handler: controllers/UsersController
       responses:
         "200":
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-            application/xml:
               schema:
                 $ref: "#/components/schemas/User"
           description: Dados do perfil do utilizador
@@ -32,13 +28,89 @@ paths:
       summary: Devolve as informações do perfil do atleta autenticado
       tags:
       - Users
+
+  /github/me:
+    get:
+      operationId: getGithubMe
       x-eov-operation-handler: controllers/UsersController
+      summary: Devolve as informações do perfil do utilizador autenticado via GitHub
+      tags:
+      - Users
+      security:
+      - OAuth2Github: []
+      responses:
+        "200":
+          description: Sucesso. Devolve mensagem de boas-vindas e dados do utilizador.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    $ref: "#/components/schemas/User"
+        "401":
+          description: Não autenticado
+        "403":
+          description: Acesso negado.
+
+  /google/me:
+    get:
+      operationId: getGoogleMe
+      x-eov-operation-handler: controllers/UsersController
+      summary: Devolve as informações do perfil do utilizador autenticado via Google
+      tags:
+      - Users
+      security:
+      - OAuth2Google: []
+      responses:
+        "200":
+          description: Sucesso. Devolve mensagem de boas-vindas e dados do utilizador.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    $ref: "#/components/schemas/User"
+        "401":
+          description: Não autenticado
+        "403":
+          description: Acesso negado.
+
+  /discord/me:
+    get:
+      operationId: getDiscordMe
+      x-eov-operation-handler: controllers/UsersController
+      summary: Devolve as informações do perfil do utilizador autenticado via Discord
+      tags:
+      - Users
+      security:
+      - OAuth2Discord: []
+      responses:
+        "200":
+          description: Sucesso. Devolve mensagem de boas-vindas e dados do utilizador.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    $ref: "#/components/schemas/User"
+        "401":
+          description: Não autenticado
+        "403":
+          description: Acesso negado.
 
   /workouts/public:
     get:
       operationId: workoutsPublicGET
-      x-openapi-router-controller: WorkoutsController
-      x-openapi-router-service: WorkoutsService
+      x-eov-operation-handler: controllers/WorkoutsController
       responses:
         "200":
           content:
@@ -47,14 +119,6 @@ paths:
                 items:
                   $ref: "#/components/schemas/Workout"
                 type: array
-            application/xml:
-              schema:
-                type: array
-                xml:
-                  name: workouts
-                  wrapped: true
-                items:
-                  $ref: "#/components/schemas/Workout"
           description: Array de Workouts públicos
       security:
       - BasicAuth: []
@@ -64,12 +128,11 @@ paths:
       summary: Devolve todos os planos de treino PÚBLICOS da comunidade
       tags:
       - Workouts
-      x-eov-operation-handler: controllers/WorkoutsController
+      
   /workouts/me:
     get:
       operationId: workoutsMeGET
-      x-openapi-router-controller: WorkoutsController
-      x-openapi-router-service: WorkoutsService
+      x-eov-operation-handler: controllers/WorkoutsController
       responses:
         "200":
           content:
@@ -78,35 +141,23 @@ paths:
                 items:
                   $ref: "#/components/schemas/Workout"
                 type: array
-            application/xml:
-              schema:
-                type: array
-                xml:
-                  name: workouts
-                  wrapped: true
-                items:
-                  $ref: "#/components/schemas/Workout"
           description: Array de Workouts do utilizador
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
       - OAuth2Github: []
       - OAuth2Google: []
-      summary: Devolve todos os treinos do utilizador autenticado (Públicos e Privados)
+      summary: Devolve todos os treinos do utilizador autenticado
       tags:
       - Workouts
-      x-eov-operation-handler: controllers/WorkoutsController
+      
   /workouts:
     post:
       operationId: workoutsPOST
-      x-openapi-router-controller: WorkoutsController
-      x-openapi-router-service: WorkoutsService
+      x-eov-operation-handler: controllers/WorkoutsController
       requestBody:
         content:
           application/json:
-            schema:
-              $ref: "#/components/schemas/WorkoutRequest"
-          application/xml:
             schema:
               $ref: "#/components/schemas/WorkoutRequest"
         required: true
@@ -118,15 +169,14 @@ paths:
       - ApiKeyAuth: []
       - OAuth2Github: []
       - OAuth2Google: []
-      summary: Cria um novo plano de treino para o utilizador autenticado
+      summary: Cria um novo plano de treino
       tags:
       - Workouts
-      x-eov-operation-handler: controllers/WorkoutsController
+      
   /workouts/{id}:
     delete:
       operationId: workoutsIdDELETE
-      x-openapi-router-controller: WorkoutsController
-      x-openapi-router-service: WorkoutsService
+      x-eov-operation-handler: controllers/WorkoutsController
       parameters:
       - explode: false
         in: path
@@ -137,20 +187,18 @@ paths:
         style: simple
       responses:
         "204":
-          description: Treino apagado (No Content)
+          description: Treino apagado
       security:
       - BasicAuth: []
       - ApiKeyAuth: []
       - OAuth2Github: []
       - OAuth2Google: []
-      summary: Apaga um plano de treino (Apenas o autor pode apagar)
+      summary: Apaga um plano de treino
       tags:
       - Workouts
-      x-eov-operation-handler: controllers/WorkoutsController
     get:
       operationId: workoutsIdGET
-      x-openapi-router-controller: WorkoutsController
-      x-openapi-router-service: WorkoutsService
+      x-eov-operation-handler: controllers/WorkoutsController
       parameters:
       - explode: false
         in: path
@@ -163,9 +211,6 @@ paths:
         "200":
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/Workout"
-            application/xml:
               schema:
                 $ref: "#/components/schemas/Workout"
           description: Detalhes do treino
@@ -179,11 +224,9 @@ paths:
       summary: Devolve os detalhes de um treino específico
       tags:
       - Workouts
-      x-eov-operation-handler: controllers/WorkoutsController
     put:
       operationId: workoutsIdPUT
-      x-openapi-router-controller: WorkoutsController
-      x-openapi-router-service: WorkoutsService
+      x-eov-operation-handler: controllers/WorkoutsController
       parameters:
       - explode: false
         in: path
@@ -197,9 +240,6 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/WorkoutRequest"
-          application/xml:
-            schema:
-              $ref: "#/components/schemas/WorkoutRequest"
         required: true
       responses:
         "200":
@@ -209,13 +249,14 @@ paths:
       - ApiKeyAuth: []
       - OAuth2Github: []
       - OAuth2Google: []
-      summary: Atualiza um plano de treino (Apenas o autor pode atualizar)
+      summary: Atualiza um plano de treino
       tags:
       - Workouts
-      x-eov-operation-handler: controllers/WorkoutsController
+      
   /exercises:
     get:
       operationId: exercisesGET
+      x-eov-operation-handler: controllers/ExercisesController
       responses:
         "200":
           content:
@@ -224,24 +265,16 @@ paths:
                 items:
                   $ref: "#/components/schemas/Exercise"
                 type: array
-            application/xml:
-              schema:
-                type: array
-                xml:
-                  name: exercises
-                  wrapped: true
-                items:
-                  $ref: "#/components/schemas/Exercise"
-                example: <exercise> <id>1</id> <title>Bench Press</title> <description>Chest exercise</description> </exercise>
           description: Array com todos os exercícios
       security: []
       summary: Devolve a lista global de exercícios disponíveis
       tags:
       - Exercises
-      x-eov-operation-handler: controllers/ExercisesController
+      
   /exercises/{id}:
     get:
       operationId: exercisesIdGET
+      x-eov-operation-handler: controllers/ExercisesController
       parameters:
       - explode: false
         in: path
@@ -256,20 +289,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exercise"
-            application/xml:
-              schema:
-                $ref: "#/components/schemas/Exercise"
           description: Detalhes do exercício
       security: []
       summary: Devolve os detalhes de um exercício específico
       tags:
       - Exercises
-      x-eov-operation-handler: controllers/ExercisesController
+      
 components:
   schemas:
     User:
-      xml:
-        name: user
       example:
         firstName: firstName
         lastName: lastName
@@ -292,9 +320,8 @@ components:
       - email
       - firstName
       type: object
+      
     Exercise:
-      xml:
-        name: exercise
       example:
         description: description
         id: 5
@@ -311,9 +338,8 @@ components:
       - description
       - title
       type: object
+      
     WorkoutExercise:
-      xml:
-        name: workoutExercise
       example:
         reps: 5
         Exercise:
@@ -331,20 +357,13 @@ components:
         Exercise:
           $ref: "#/components/schemas/Exercise"
       type: object
+      
     Workout:
-      xml:
-        name: workout
       example:
         visibility: public
         UserId: 6
         description: description
         Exercises:
-        - reps: 5
-          Exercise:
-            description: description
-            id: 5
-            title: title
-          sets: 1
         - reps: 5
           Exercise:
             description: description
@@ -374,18 +393,14 @@ components:
         Exercises:
           type: array
           description: Lista de exercícios com as respetivas séries e repetições
-          xml:
-            wrapped: true
-            name: exercises
           items:
             $ref: "#/components/schemas/WorkoutExercise"
       required:
       - title
       - visibility
       type: object
+      
     WorkoutExerciseRequest:
-      xml:
-        name: workoutExerciseRequest
       example:
         reps: 1
         exerciseId: 0
@@ -402,15 +417,11 @@ components:
       - reps
       - sets
       type: object
+      
     WorkoutRequest:
-      xml:
-        name: workoutRequest
       example:
         visibility: private
         exercises:
-        - reps: 1
-          exerciseId: 0
-          sets: 6
         - reps: 1
           exerciseId: 0
           sets: 6
@@ -429,15 +440,13 @@ components:
           type: string
         exercises:
           type: array
-          description: Array com os exercícios a associar (incluindo séries e repetições)
-          xml:
-            wrapped: true
-            name: exercises
+          description: Array com os exercícios a associar
           items:
             $ref: "#/components/schemas/WorkoutExerciseRequest"
       required:
       - title
       type: object
+      
   securitySchemes:
     BasicAuth:
       scheme: basic
@@ -459,4 +468,11 @@ components:
           authorizationUrl: http://localhost:8080/auth/google
           scopes: {}
           tokenUrl: https://oauth2.googleapis.com/token
+      type: oauth2
+    OAuth2Discord:
+      flows:
+        authorizationCode:
+          authorizationUrl: http://localhost:8080/auth/discord
+          scopes: {}
+          tokenUrl: https://discord.com/api/oauth2/token
       type: oauth2

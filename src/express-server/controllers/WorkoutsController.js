@@ -7,30 +7,45 @@
  */
 
 const Controller = require('./Controller');
-const service = require('../services/WorkoutsService');
+const Service = require('../services/WorkoutsService');
 
 const workoutsPublicGET = async (request, response) => {
-  await Controller.handleRequest(request, response, () => service.workoutsPublicGET(request));
+  try {
+    const data = await Service.workoutsPublicGET(request);
+    response.status(200).json(data.payload || data);
+  } catch (error) {
+    response.status(error.code || 500).json({ error: error.message });
+  }
 };
 
 const workoutsMeGET = async (request, response) => {
-  await Controller.handleRequest(request, response, () => service.workoutsMeGET(request));
-};
-
-const workoutsPOST = async (request, response) => {
-  await Controller.handleRequest(request, response, () => service.workoutsPOST(request));
-};
-
-const workoutsIdDELETE = async (request, response) => {
-  await Controller.handleRequest(request, response, () => service.workoutsIdDELETE(request));
+  try {
+    const data = await Service.workoutsMeGET(request);
+    response.status(200).json(data.payload || data);
+  } catch (error) {
+    response.status(error.code || 500).json({ error: error.message });
+  }
 };
 
 const workoutsIdGET = async (request, response) => {
-  await Controller.handleRequest(request, response, () => service.workoutsIdGET(request));
+  try {
+    const data = await Service.workoutsIdGET(request);
+    response.status(200).json(data.payload || data);
+  } catch (error) {
+    response.status(error.code || 500).json({ error: error.message });
+  }
+};
+
+const workoutsPOST = async (request, response) => {
+  await Controller.handleRequest(request, response, () => Service.workoutsPOST(request));
+};
+
+const workoutsIdDELETE = async (request, response) => {
+  await Controller.handleRequest(request, response, () => Service.workoutsIdDELETE(request));
 };
 
 const workoutsIdPUT = async (request, response) => {
-  await Controller.handleRequest(request, response, () => service.workoutsIdPUT(request));
+  await Controller.handleRequest(request, response, () => Service.workoutsIdPUT(request));
 };
 
 module.exports = {

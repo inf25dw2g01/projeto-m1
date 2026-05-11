@@ -8,8 +8,35 @@
 
 const Controller = require('./Controller');
 const service = require('../services/UsersService');
+
 const usersMeGET = async (request, response) => {
-  await Controller.handleRequest(request, response, () => service.usersMeGET(request));
+  try {
+    const data = await service.usersMeGET(request); 
+    response.status(200).json(data.payload || data);
+  } catch (error) {
+    response.status(error.code || 500).json({ error: error.message });
+  }
+};
+
+const getGoogleMe = async (request, response) => {
+  if (request.isAuthenticated && request.isAuthenticated() && request.session.authMethod === 'google') {
+    return response.status(200).json({ message: "Perfil Google", user: request.user });
+  }
+  response.status(403).json({ error: "Acesso negado. Apenas logins via Google permitidos aqui." });
+};
+
+const getGithubMe = async (request, response) => {
+  if (request.isAuthenticated && request.isAuthenticated() && request.session.authMethod === 'github') {
+    return response.status(200).json({ message: "Perfil GitHub", user: request.user });
+  }
+  response.status(403).json({ error: "Acesso negado. Apenas logins via GitHub permitidos aqui." });
+};
+
+const getDiscordMe = async (request, response) => {
+  if (request.isAuthenticated && request.isAuthenticated() && request.session.authMethod === 'discord') {
+    return response.status(200).json({ message: "Perfil Discord", user: request.user });
+  }
+  response.status(403).json({ error: "Acesso negado. Apenas logins via Discord permitidos aqui." });
 };
 
 const usersMeApiKeyPOST = async (request, response) => {
@@ -18,5 +45,8 @@ const usersMeApiKeyPOST = async (request, response) => {
 
 module.exports = {
   usersMeGET,
+  getGoogleMe,
+  getGithubMe,
+  getDiscordMe,
   usersMeApiKeyPOST,
 };

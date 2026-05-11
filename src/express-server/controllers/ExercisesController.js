@@ -7,15 +7,20 @@
  */
 
 const Controller = require('./Controller');
-const service = require('../services/ExercisesService');
+const Service = require('../services/ExercisesService');
+
 const exercisesGET = async (request, response) => {
-  await Controller.handleRequest(request, response, () => service.exercisesGET(request));
+  try {
+    const data = await Service.exercisesGET(request);
+    response.status(200).json(data.payload || data);
+  } catch (error) {
+    response.status(error.code || 500).json({ error: error.message });
+  }
 };
 
 const exercisesIdGET = async (request, response) => {
-  await Controller.handleRequest(request, response, () => service.exercisesIdGET(request));
+  await Controller.handleRequest(request, response, () => Service.exercisesIdGET(request));
 };
-
 
 module.exports = {
   exercisesGET,
