@@ -6,6 +6,11 @@ https://console.cloud.google.com/auth/clients?project=prime-force-404919
 Este projeto consiste no desenvolvimento de uma API REST, explorando operações CRUD, para suportar um Sistema de Gestão de Ginásio. A plataforma permite operar de forma segura sobre perfis de atletas (Users), gerir os seus planos de treino personalizados (Workouts) e consultar uma biblioteca global de atividades físicas (Exercises). A arquitetura contempla relações robustas entre os recursos e regras estritas de isolamento de dados por utilizador. O projeto foi desenvolvido em Node.js (framework Express), com persistência de dados em MySQL gerida através do ORM Sequelize, protegido por múltiplas camadas de autenticação (incluindo OAuth 2.0) e executado num ambiente multi-container Docker.
 
 
+## Presentation
+
+De forma a apoiar visualmente a apresentação oral do projeto, foi criado uma [apresentação gráfica](https://canva.link/m121cn3pmn4j6nu), na aplicação Canva, que demonstra o progresso do desenvolvimento de maneira clara e sucinta.
+
+
 ## Repository organization
 
 A estrutura do nosso repositório compõe se por:
