@@ -30,6 +30,7 @@
     "express-session": "^1.19.0",
     "helmet": "^8.1.0",
     "js-yaml": "^3.3.0",
+    "jstoxml": "^7.1.0",
     "mysql2": "^3.22.3",
     "ono": "^5.0.1",
     "openapi-sampler": "^1.0.0-beta.15",

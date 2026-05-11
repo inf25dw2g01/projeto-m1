@@ -5,58 +5,28 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 
-// Endpoint /github/me
 router.get('/github/me', (req, res) => {
-  if (!req.user) {
-    return res.status(401).json({ error: 'Não autenticado' });
-  }
-
+  if (!req.user) return res.status(401).json({ error: 'Não autenticado' });
   if (req.session.authMethod !== 'github') {
-    return res.status(403).json({ 
-      error: 'Acesso negado. Apenas logins via Github permitidos aqui.' 
-    });
+    return res.status(403).json({ error: 'Acesso negado. Apenas logins via Github permitidos aqui.' });
   }
-
-  res.status(200).json({
-    message: "Bem-vindo ao endpoint exclusivo do Github!",
-    user: req.user
-  });
+  res.status(200).json({ message: "Bem-vindo ao endpoint exclusivo do Github!", user: req.user });
 });
 
-// Endpoint /google/me
 router.get('/google/me', (req, res) => {
-  if (!req.user) {
-    return res.status(401).json({ error: 'Não autenticado' });
-  }
-
+  if (!req.user) return res.status(401).json({ error: 'Não autenticado' });
   if (req.session.authMethod !== 'google') {
-    return res.status(403).json({ 
-      error: 'Acesso negado. Apenas logins via Google permitidos aqui.' 
-    });
+    return res.status(403).json({ error: 'Acesso negado. Apenas logins via Google permitidos aqui.' });
   }
-
-  res.status(200).json({
-    message: "Bem-vindo ao endpoint exclusivo do Google!",
-    user: req.user
-  });
+  res.status(200).json({ message: "Bem-vindo ao endpoint exclusivo do Google!", user: req.user });
 });
 
-// Endpoint /discord/me
 router.get('/discord/me', (req, res) => {
-  if (!req.user) {
-    return res.status(401).json({ error: 'Não autenticado' });
-  }
-
+  if (!req.user) return res.status(401).json({ error: 'Não autenticado' });
   if (req.session.authMethod !== 'discord') {
-    return res.status(403).json({ 
-      error: 'Acesso negado. Apenas logins via Discord permitidos aqui.' 
-    });
+    return res.status(403).json({ error: 'Acesso negado. Apenas logins via Discord permitidos aqui.' });
   }
-
-  res.status(200).json({
-    message: "Bem-vindo ao endpoint exclusivo do Discord!",
-    user: req.user
-  });
+  res.status(200).json({ message: "Bem-vindo ao endpoint exclusivo do Discord!", user: req.user });
 });
 
 router.post('/auth/apikey', async (req, res) => {
@@ -65,44 +35,29 @@ router.post('/auth/apikey', async (req, res) => {
     try {
         const user = await User.findOne({ where: { apiKey: apikey } });
         if (!user) return res.redirect('/?apikey_status=invalid');
-        
         return res.redirect(`/?apikey_status=valid&name=${encodeURIComponent(user.firstName)}&email=${encodeURIComponent(user.email)}`);
     } catch (err) {
         res.redirect('/');
     }
 });
 
-router.get(
-    "/auth/github", passport.authenticate("github", { scope: ["user:email"] })
-);
-router.get(
-    "/auth/github/callback", passport.authenticate("github", { failureRedirect: "/" }), (req, res) => {
+router.get("/auth/github", passport.authenticate("github", { scope: ["user:email"] }));
+router.get("/auth/github/callback", passport.authenticate("github", { failureRedirect: "/" }), (req, res) => {
     req.session.authMethod = 'github';
     req.session.save(() => { res.redirect("/"); });
 });
 
-router.get(
-    "/auth/google", 
-    passport.authenticate("google", { scope: ["profile", "email"] })
-);
-router.get(
-    "/auth/google/callback", passport.authenticate("google", { failureRedirect: "/" }), (req, res) => {
+router.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+router.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/" }), (req, res) => {
     req.session.authMethod = 'google';
     req.session.save(() => { res.redirect("/"); });
 });
 
-router.get(
-      "/auth/discord",
-      passport.authenticate("discord", { scope: ["identify", "email"] }),
-    );
-    router.get(
-      "/auth/discord/callback",
-      passport.authenticate("discord", { failureRedirect: "/" }),
-      (req, res) => {
-        req.session.authMethod = 'discord';
-        req.session.save(() => { res.redirect("/"); });
-      },
-    );
+router.get("/auth/discord", passport.authenticate("discord", { scope: ["identify", "email"] }));
+router.get("/auth/discord/callback", passport.authenticate("discord", { failureRedirect: "/" }), (req, res) => {
+    req.session.authMethod = 'discord';
+    req.session.save(() => { res.redirect("/"); });
+});
 
 router.get("/auth/register", (req, res) => {
     res.render("register", { error: req.query.error });
@@ -134,7 +89,7 @@ router.post("/auth/basic/login", async (req, res) => {
         req.login(loginUser, (err) => {
             if (err) return res.redirect("/?error=server_error");
             req.session.authMethod = 'basic';
-            res.redirect("/");
+            req.session.save(() => { res.redirect("/"); });
         });
     } catch (err) {
         res.redirect("/?error=server_error");
