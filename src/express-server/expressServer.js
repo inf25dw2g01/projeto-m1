@@ -20,8 +20,8 @@ const User = require("./models/User");
 const authRoutes = require('./routes/authRoutes');
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000, 
+  max: 100, 
 });
 
 class ExpressServer {
@@ -38,21 +38,17 @@ class ExpressServer {
   }
 
   setupMiddleware() {
-    // this.setupAllowedMedia();
     this.app.use(cors());
     this.app.use(bodyParser.json({ limit: "14MB" }));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cookieParser());
-    this.app.use(
-      helmet({
-        contentSecurityPolicy: false, // Desativar para poder correr os scrips do ejs
-      }),
-    );
+    this.app.use(helmet({ contentSecurityPolicy: false }));
     this.app.use("/api/", limiter);
     this.app.set("view engine", "ejs");
     this.app.set("views", path.join(__dirname, "public", "views"));
     this.app.use(express.static(path.join(__dirname, "public")));
+    
     const sessionOptions = {
       secret: "my top secret key",
       resave: false,
@@ -64,9 +60,7 @@ class ExpressServer {
 
     this.app.use((req, res, next) => {
       if (req.user) {
-        console.log(
-          `[AUTH LOG] Pedido recebido de: ${req.user.firstName} ${req.user.lastName} (${req.user.email})`,
-        );
+        console.log(`[AUTH LOG] Pedido recebido de: ${req.user.firstName} ${req.user.lastName} (${req.user.email})`);
       }
       next();
     });
@@ -92,10 +86,14 @@ class ExpressServer {
 
     this.app.use(apiKeyAuth);
 
+<<<<<<< HEAD
     this.app.get("/hello", (req, res) =>
       res.send(`Hello World. path: ${this.openApiPath}`)
     );
 
+=======
+    this.app.get("/hello", (req, res) => res.send(`Hello World. path: ${this.openApiPath}`));
+>>>>>>> 2e3b9f5ba9751d950368ed03b53f395e1fbc186d
     this.app.get("/openapi", (req, res) => res.sendFile(this.openApiPath));
     this.app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(this.schema));
 

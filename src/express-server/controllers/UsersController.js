@@ -8,11 +8,15 @@
 
 const Controller = require('./Controller');
 const service = require('../services/UsersService');
+<<<<<<< HEAD
 const { toXML } = require('jstoxml');
+=======
+>>>>>>> 2e3b9f5ba9751d950368ed03b53f395e1fbc186d
 
 const usersMeGET = async (request, response) => {
   try {
     const data = await service.usersMeGET(request); 
+<<<<<<< HEAD
     const responseData = data.payload || data;
     
     response.format({
@@ -28,12 +32,16 @@ const usersMeGET = async (request, response) => {
       },
       'default': () => response.status(406).send('Not Acceptable')
     });
+=======
+    response.status(200).json(data.payload || data);
+>>>>>>> 2e3b9f5ba9751d950368ed03b53f395e1fbc186d
   } catch (error) {
     response.status(error.code || 500).json({ error: error.message });
   }
 };
 
 const getGoogleMe = async (request, response) => {
+<<<<<<< HEAD
   if (request.isAuthenticated && request.isAuthenticated()) {
     return response.status(200).json(request.user);
   }
@@ -52,6 +60,26 @@ const getDiscordMe = async (request, response) => {
     return response.status(200).json(request.user);
   }
   response.status(401).json({ error: "Não autenticado via Discord" });
+=======
+  if (request.isAuthenticated && request.isAuthenticated() && request.session.authMethod === 'google') {
+    return response.status(200).json({ message: "Perfil Google", user: request.user });
+  }
+  response.status(403).json({ error: "Acesso negado. Apenas logins via Google permitidos aqui." });
+};
+
+const getGithubMe = async (request, response) => {
+  if (request.isAuthenticated && request.isAuthenticated() && request.session.authMethod === 'github') {
+    return response.status(200).json({ message: "Perfil GitHub", user: request.user });
+  }
+  response.status(403).json({ error: "Acesso negado. Apenas logins via GitHub permitidos aqui." });
+};
+
+const getDiscordMe = async (request, response) => {
+  if (request.isAuthenticated && request.isAuthenticated() && request.session.authMethod === 'discord') {
+    return response.status(200).json({ message: "Perfil Discord", user: request.user });
+  }
+  response.status(403).json({ error: "Acesso negado. Apenas logins via Discord permitidos aqui." });
+>>>>>>> 2e3b9f5ba9751d950368ed03b53f395e1fbc186d
 };
 
 const usersMeApiKeyPOST = async (request, response) => {

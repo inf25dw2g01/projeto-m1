@@ -8,6 +8,7 @@
 
 const Controller = require('./Controller');
 const Service = require('../services/ExercisesService');
+<<<<<<< HEAD
 const { toXML } = require('jstoxml');
 
 const exercisesGET = async (request, response) => {
@@ -35,11 +36,24 @@ const exercisesGET = async (request, response) => {
 
   } catch (error) {
     response.status(500).json({ error: error.message });
+=======
+
+const exercisesGET = async (request, response) => {
+  try {
+    const data = await Service.exercisesGET(request);
+    response.status(200).json(data.payload || data);
+  } catch (error) {
+    response.status(error.code || 500).json({ error: error.message });
+>>>>>>> 2e3b9f5ba9751d950368ed03b53f395e1fbc186d
   }
 };
 
 const exercisesIdGET = async (request, response) => {
+<<<<<<< HEAD
   await Controller.handleRequest(request, response, service => Service.exercisesIdGET(request));
+=======
+  await Controller.handleRequest(request, response, () => Service.exercisesIdGET(request));
+>>>>>>> 2e3b9f5ba9751d950368ed03b53f395e1fbc186d
 };
 
 module.exports = {

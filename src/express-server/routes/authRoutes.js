@@ -5,6 +5,7 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 
+<<<<<<< HEAD
 router.get('/github/me', (req, res) => {
   if (!req.user) return res.status(401).json({ error: 'Não autenticado' });
   if (req.session.authMethod !== 'github') {
@@ -28,6 +29,8 @@ router.get('/discord/me', (req, res) => {
   }
   res.status(200).json({ message: "Bem-vindo ao endpoint exclusivo do Discord!", user: req.user });
 });
+=======
+>>>>>>> 2e3b9f5ba9751d950368ed03b53f395e1fbc186d
 
 router.post('/auth/apikey', async (req, res) => {
     const { apikey } = req.body;
@@ -68,10 +71,8 @@ router.post("/auth/register", async (req, res) => {
     try {
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) return res.redirect("/auth/register?error=email_exists");
-        
-        const hashedPassword = await bcrypt.hash(password, 10);
         const newApiKey = crypto.randomBytes(32).toString('hex');
-        await User.create({ firstName, lastName, email, password: hashedPassword, apiKey: newApiKey });
+        await User.create({ firstName, lastName, email, password: password, apiKey: newApiKey });
         res.redirect("/?apikey_status=registered");
     } catch (err) {
         res.redirect("/auth/register?error=server_error");
