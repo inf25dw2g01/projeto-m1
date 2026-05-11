@@ -17,6 +17,7 @@ const rateLimit = require("express-rate-limit");
 const apiKeyAuth = require("./middleware/ApiKeyAuth");
 const BasicAuth = require("./middleware/BasicAuth");
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const User = require("./models/User");
 const { error } = require("console");
 
@@ -178,6 +179,7 @@ class ExpressServer {
       "/auth/basic/login",
       express.urlencoded({ extended: true }),
       async (req, res) => {
+        req.session.authMethod = 'basic';
         const { email, password } = req.body;
 
         try {
@@ -193,6 +195,8 @@ class ExpressServer {
             return res.redirect("/?error=invalid_credentials");
           }
 
+          const newApiKey = crypto.randomBytes(32).toString('hex');
+
           const loginUser = {
             id: user.id,
             firstName: user.firstName,
@@ -200,9 +204,13 @@ class ExpressServer {
             email: user.email,
           };
 
+          if (!user.apiKey) {
+            await User.update({apiKey: newApiKey}, { where: { id: user.id } });
+          }
+
           req.login(loginUser, (err) => {
             if (err) return res.redirect("/?error=server_error");
-            res.redirect("/");
+            res.redirect("/?apikey_status=registered");
           });
         } catch (err) {
           console.error("Basic auth login error:", err);
@@ -225,8 +233,10 @@ class ExpressServer {
         if (existingUser) {
           return res.redirect("/auth/register?error=email_exists");
         }
-        const hashedPassword = await bcrypt.hash(password, 10);
-        await User.create({ firstName, lastName, email, password});
+
+        const newApiKey = crypto.randomBytes(32).toString('hex');
+
+        await User.create({ firstName, lastName, email, password, apiKey: newApiKey});
         res.redirect("/?apikey_status=registered");
       } catch (err) {
         console.error("Error checking existing user:", err);
