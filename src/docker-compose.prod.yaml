@@ -2,7 +2,7 @@ name: gym_tracker_prod
 
 services:
   db:
-    image: inf25dw2g01/gym_tracker_m1:db-0.2.0
+    image: inf25dw2g01/gym_tracker_m1:db-1.0.0
     container_name: gym_tracker-db-prod
     restart: always
     environment:
@@ -14,7 +14,7 @@ services:
       - '3306:3306'
 
   app:
-    image: inf25dw2g01/gym_tracker_m1:app-0.2.0
+    image: inf25dw2g01/gym_tracker_m1:app-1.0.0
     container_name: gym_tracker-app-prod
     restart: always
     env_file:
