@@ -1,9 +1,8 @@
 # Sistema de Gestão de Ginásio - Desenvolvimento Web II
 
 ## Short theme description
-https://console.cloud.google.com/auth/clients?project=prime-force-404919
 
-Este projeto consiste no desenvolvimento de uma API REST, explorando operações CRUD, para suportar um Sistema de Gestão de Ginásio. A plataforma permite operar de forma segura sobre perfis de atletas (Users), gerir os seus planos de treino personalizados (Workouts) e consultar uma biblioteca global de atividades físicas (Exercises). A arquitetura contempla relações robustas entre os recursos e regras estritas de isolamento de dados por utilizador. O projeto foi desenvolvido em Node.js (framework Express), com persistência de dados em MySQL gerida através do ORM Sequelize, protegido por múltiplas camadas de autenticação (incluindo OAuth 2.0) e executado num ambiente multi-container Docker.
+Este projeto consiste no desenvolvimento de uma API REST, explorando operações CRUD, para suportar um Sistema de Gestão de Ginásio. A plataforma permite operar de forma segura sobre perfis de atletas (Users), gerir os seus planos de treino personalizados (Workouts) e consultar uma biblioteca global pública de atividades físicas (Exercises). A arquitetura contempla relações robustas entre os recursos e regras estritas de isolamento de dados por utilizador. O projeto foi desenvolvido em Node.js (framework Express), com persistência de dados em MySQL gerida através do ORM Sequelize, protegido por múltiplas camadas de autenticação (incluindo OAuth 2.0) e executado num ambiente multi-container Docker.
 
 
 ## Presentation
@@ -15,28 +14,30 @@ De forma a apoiar visualmente a apresentação oral do projeto, foi criado uma [
 
 A estrutura do nosso repositório compõe se por:
 
-* **Source code** is in the [src folder](src/).
+* **Source code** está na pasta [src folder](src/).
     Contém:
     * API (Express + NodeJS) na pasta [express-server](src/express-server/)
+        * Initial [OpenApi document](src/express-server/api/openapi.yaml)
     * Dockerfiles:
         * [Dockerfile da API](src/express-server/Dockerfile)
         * [docker-compose.dev.yaml](src/docker-compose.dev.yaml)
         * [docker-compose.prod.yaml](src/docker-compose.prod.yaml)
-    * Initial [OpenApi document](src/openapi.yaml)
-* Report chapters are in [doc folder](doc/).
+* O nosso relatório está na pasta [doc folder](doc/) dividido em 4 capítulos:
     * Chapter 1: [Project presentation](doc/c1.md)
     * Chapter 2: [Resources](doc/c2.md)
     * Chapter 3: [Product](doc/c3.md)
     * Chapter 4: [Presentation](doc/c4.md)
+    * Prints do nosso projeto na pasta [Imagens](doc/imagens/)
+* Collection Postman que contém o ficheiro .json da nossa collection
 
 
 ## Gallery of our Final Result
 
 | Image  | Description | Image´s preview |
 | :---    |    :----:   |          ---: |
-| Browser | Final result in browser | <img src="" width="300">   |
-| Postman | Final result in Postman | <img src="">  |
-| Docker  | Multicontainer-App final result in Docker | <img src="" width="300">    |
+| Browser | Final result in browser | <img src="doc\imagens\M1_interface.JPG" width="300">   |
+| Postman | Final result in Postman | <img src="doc\imagens\print_collection_postman.JPG">  |
+| Docker  | Multicontainer-App final result in Docker | <img src="doc\imagens\print_multi-container-app_Docker.JPG" width="300">    |
 
 ## Technologies
 
