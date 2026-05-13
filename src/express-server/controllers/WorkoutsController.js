@@ -8,30 +8,11 @@
 
 const Controller = require('./Controller');
 const Service = require('../services/WorkoutsService');
-<<<<<<< HEAD
-const { toXML } = require('jstoxml');
-=======
->>>>>>> 2e3b9f5ba9751d950368ed03b53f395e1fbc186d
 
 const workoutsPublicGET = async (request, response) => {
   try {
     const data = await Service.workoutsPublicGET(request);
-<<<<<<< HEAD
-    const responseData = data.payload || data;
-    response.format({
-      'application/json': () => {
-        response.status(200).json(responseData);
-      },
-      'application/xml': () => {
-        const plainData = JSON.parse(JSON.stringify(responseData));
-        const xmlData = toXML({ workouts: { workout: plainData } }, { header: true, indent: '  ' });
-        response.status(200).type('application/xml').send(xmlData);
-      },
-      'default': () => response.status(406).send('Not Acceptable')
-    });
-=======
     response.status(200).json(data.payload || data);
->>>>>>> 2e3b9f5ba9751d950368ed03b53f395e1fbc186d
   } catch (error) {
     response.status(error.code || 500).json({ error: error.message });
   }
@@ -40,22 +21,7 @@ const workoutsPublicGET = async (request, response) => {
 const workoutsMeGET = async (request, response) => {
   try {
     const data = await Service.workoutsMeGET(request);
-<<<<<<< HEAD
-    const responseData = data.payload || data;
-    response.format({
-      'application/json': () => {
-        response.status(200).json(responseData);
-      },
-      'application/xml': () => {
-        const plainData = JSON.parse(JSON.stringify(responseData));
-        const xmlData = toXML({ workouts: { workout: plainData } }, { header: true, indent: '  ' });
-        response.status(200).type('application/xml').send(xmlData);
-      },
-      'default': () => response.status(406).send('Not Acceptable')
-    });
-=======
     response.status(200).json(data.payload || data);
->>>>>>> 2e3b9f5ba9751d950368ed03b53f395e1fbc186d
   } catch (error) {
     response.status(error.code || 500).json({ error: error.message });
   }
@@ -64,22 +30,7 @@ const workoutsMeGET = async (request, response) => {
 const workoutsIdGET = async (request, response) => {
   try {
     const data = await Service.workoutsIdGET(request);
-<<<<<<< HEAD
-    const responseData = data.payload || data;
-    response.format({
-      'application/json': () => {
-        response.status(200).json(responseData);
-      },
-      'application/xml': () => {
-        const plainData = JSON.parse(JSON.stringify(responseData));
-        const xmlData = toXML({ workout: plainData }, { header: true, indent: '  ' });
-        response.status(200).type('application/xml').send(xmlData);
-      },
-      'default': () => response.status(406).send('Not Acceptable')
-    });
-=======
     response.status(200).json(data.payload || data);
->>>>>>> 2e3b9f5ba9751d950368ed03b53f395e1fbc186d
   } catch (error) {
     response.status(error.code || 500).json({ error: error.message });
   }

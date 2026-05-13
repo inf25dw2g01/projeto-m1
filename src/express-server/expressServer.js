@@ -71,7 +71,7 @@ class ExpressServer {
         const dbUser = await User.findByPk(req.user.id);
         apiKey = dbUser ? dbUser.apiKey : null;
       }
-      res.render('index', {
+      res.render('index', { 
         user: req.user || null,
         apiKey: apiKey,
         authMethod: req.session.authMethod || null,
@@ -86,14 +86,7 @@ class ExpressServer {
 
     this.app.use(apiKeyAuth);
 
-<<<<<<< HEAD
-    this.app.get("/hello", (req, res) =>
-      res.send(`Hello World. path: ${this.openApiPath}`)
-    );
-
-=======
     this.app.get("/hello", (req, res) => res.send(`Hello World. path: ${this.openApiPath}`));
->>>>>>> 2e3b9f5ba9751d950368ed03b53f395e1fbc186d
     this.app.get("/openapi", (req, res) => res.sendFile(this.openApiPath));
     this.app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(this.schema));
 
@@ -107,7 +100,7 @@ class ExpressServer {
       }),
     );
   }
-
+  
   launch() {
     this.app.use((err, req, res, next) => {
       res.status(err.status || 500).json({

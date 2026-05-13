@@ -5,32 +5,6 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 
-<<<<<<< HEAD
-router.get('/github/me', (req, res) => {
-  if (!req.user) return res.status(401).json({ error: 'Não autenticado' });
-  if (req.session.authMethod !== 'github') {
-    return res.status(403).json({ error: 'Acesso negado. Apenas logins via Github permitidos aqui.' });
-  }
-  res.status(200).json({ message: "Bem-vindo ao endpoint exclusivo do Github!", user: req.user });
-});
-
-router.get('/google/me', (req, res) => {
-  if (!req.user) return res.status(401).json({ error: 'Não autenticado' });
-  if (req.session.authMethod !== 'google') {
-    return res.status(403).json({ error: 'Acesso negado. Apenas logins via Google permitidos aqui.' });
-  }
-  res.status(200).json({ message: "Bem-vindo ao endpoint exclusivo do Google!", user: req.user });
-});
-
-router.get('/discord/me', (req, res) => {
-  if (!req.user) return res.status(401).json({ error: 'Não autenticado' });
-  if (req.session.authMethod !== 'discord') {
-    return res.status(403).json({ error: 'Acesso negado. Apenas logins via Discord permitidos aqui.' });
-  }
-  res.status(200).json({ message: "Bem-vindo ao endpoint exclusivo do Discord!", user: req.user });
-});
-=======
->>>>>>> 2e3b9f5ba9751d950368ed03b53f395e1fbc186d
 
 router.post('/auth/apikey', async (req, res) => {
     const { apikey } = req.body;
